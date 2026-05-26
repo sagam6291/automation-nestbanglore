@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NestBangalore - Single Page Website</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; font-family:'Inter',sans-serif; background:#fff; }
+  #app { display:block; min-height:100vh; }
+  .app-loader { min-height:100vh; display:grid; place-items:center; font-family:Inter,sans-serif; color:#2563eb; font-weight:800; }
+</style>
+</head>
+<body>
+<div id="app"><div class="app-loader">Loading NestBangalore...</div></div>
+
+<template id="home-template">
+  <style>
+  :host{display:block;font-family:'Inter',sans-serif;color:#1a1a2e;background:#fff;min-height:100vh;} a{text-decoration:none;} button,input,select{font-family:'Inter',sans-serif;}
+  
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #fff; }
+
+  /* ── NAVBAR ── */
+  .navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8eaf0;
+    display: flex; align-items: center;
+    padding: 0 32px; height: 56px; gap: 32px;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; flex-shrink: 0; }
+  .logo-icon {
+    width: 32px; height: 32px; background: #2563eb; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon svg { width: 18px; height: 18px; fill: white; }
+  .logo-text { font-size: 15px; font-weight: 700; color: #1a1a2e; }
+  .logo-text span { color: #2563eb; }
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-links a {
+    font-size: 13.5px; font-weight: 500; color: #374151;
+    text-decoration: none; padding: 6px 12px; border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-links a:hover { color: #2563eb; background: #eff6ff; }
+  .nav-links a.active { color: #2563eb; }
+  .nav-search {
+    flex: 1; max-width: 220px; margin-left: auto;
+    position: relative; display: flex; align-items: center;
+  }
+  .nav-search svg { position: absolute; left: 10px; width: 14px; height: 14px; color: #9ca3af; }
+  .nav-search input {
+    width: 100%; padding: 7px 10px 7px 30px;
+    border: 1px solid #e5e7eb; border-radius: 8px;
+    font-size: 13px; color: #374151; background: #f9fafb;
+    outline: none; font-family: 'Inter', sans-serif;
+  }
+  .nav-search input::placeholder { color: #9ca3af; }
+  .nav-right { display: flex; align-items: center; gap: 8px; margin-left: 12px; }
+  .btn-icon {
+    width: 34px; height: 34px; border: 1px solid #e5e7eb; border-radius: 8px;
+    background: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: #374151; transition: border-color 0.2s;
+  }
+  .btn-icon:hover { border-color: #2563eb; }
+  .btn-login {
+    font-size: 13.5px; font-weight: 600; color: #374151;
+    background: none; border: none; cursor: pointer; padding: 6px 10px;
+    border-radius: 6px; transition: color 0.2s; font-family: 'Inter', sans-serif;
+  }
+  .btn-login:hover { color: #2563eb; }
+  .btn-signup {
+    font-size: 13.5px; font-weight: 600; color: white;
+    background: #2563eb; border: none; cursor: pointer; padding: 7px 16px;
+    border-radius: 8px; transition: background 0.2s; font-family: 'Inter', sans-serif;
+  }
+  .btn-signup:hover { background: #1d4ed8; }
+  .hamburger {
+    width: 34px; height: 34px; border: 1px solid #e5e7eb; border-radius: 8px;
+    background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px;
+  }
+  .hamburger span { width: 14px; height: 1.5px; background: #374151; display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, #dbeafe 0%, #eff6ff 40%, #e0e7ff 100%);
+    padding: 72px 0 80px; text-align: center; position: relative; overflow: visible;
+  }
+  .hero h1 {
+    font-size: 48px; font-weight: 800; color: #111827; line-height: 1.15;
+    margin-bottom: 16px; letter-spacing: -1px;
+  }
+  .hero h1 span { color: #2563eb; }
+  .hero p {
+    font-size: 15px; color: #6b7280; max-width: 420px; margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+  .hero-stats { display: flex; justify-content: center; gap: 48px; margin-bottom: 36px; }
+  .stat-item { text-align: center; }
+  .stat-value { font-size: 22px; font-weight: 800; color: #2563eb; }
+  .stat-label { font-size: 11.5px; color: #6b7280; margin-top: 2px; font-weight: 500; }
+
+  /* Search bar */
+  .search-bar {
+    display: flex; align-items: center; gap: 0;
+    background: white; border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    max-width: 560px; margin: 0 auto 28px; padding: 6px; position: relative; z-index: 10;
+  }
+  .search-field {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; flex: 1; border-right: 1px solid #e5e7eb; position: relative; cursor: pointer;
+  }
+  .search-field svg { width: 15px; height: 15px; color: #9ca3af; flex-shrink: 0; }
+  .search-field select {
+    border: none; outline: none; font-size: 13.5px; color: #374151;
+    background: transparent; cursor: pointer; width: 100%; font-family: 'Inter', sans-serif;
+    appearance: none;
+  }
+  .search-field-arrow { margin-left: auto; color: #9ca3af; }
+  .search-field-arrow svg { width: 14px; height: 14px; }
+  .search-btn {
+    background: #2563eb; color: white; border: none; border-radius: 8px;
+    padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;
+    white-space: nowrap; transition: background 0.2s; flex-shrink: 0;
+  }
+  .search-btn:hover { background: #1d4ed8; }
+  .search-btn svg { width: 15px; height: 15px; }
+
+  /* Dropdown */
+  .dropdown-menu {
+    position: absolute; top: calc(100% + 4px); left: 0;
+    background: white; border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 6px 0; min-width: 160px; z-index: 50;
+    display: none;
+  }
+  .dropdown-menu.open { display: block; }
+  .dropdown-menu a {
+    display: block; padding: 9px 16px; font-size: 13.5px; color: #374151;
+    text-decoration: none; transition: background 0.15s;
+  }
+  .dropdown-menu a:hover { background: #f3f4f6; }
+
+  .hero-actions { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .btn-explore {
+    background: #2563eb; color: white; border: none; border-radius: 10px;
+    padding: 11px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .btn-explore:hover { background: #1d4ed8; }
+  .btn-demo {
+    background: white; color: #374151; border: 1.5px solid #e5e7eb; border-radius: 10px;
+    padding: 11px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif;
+    text-decoration: none; transition: border-color 0.2s;
+  }
+  .btn-demo:hover { border-color: #2563eb; }
+  .play-icon {
+    width: 26px; height: 26px; background: #ef4444; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .play-icon svg { width: 10px; height: 10px; fill: white; margin-left: 1px; }
+
+  /* ── QUICK FILTERS ── */
+  .quick-filters { padding: 48px 40px 40px; }
+  .section-title { font-size: 24px; font-weight: 700; color: #111827; text-align: center; margin-bottom: 6px; }
+  .section-sub { font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 28px; }
+  .filter-card {
+    border: 1.5px solid #e5e7eb; border-radius: 16px; padding: 28px 32px;
+    max-width: 960px; margin: 0 auto;
+  }
+  .filter-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .filter-group-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #111827;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .checkbox-item { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; }
+  .checkbox-item input[type="checkbox"] { display: none; }
+  .custom-checkbox {
+    width: 16px; height: 16px; border: 1.5px solid #d1d5db; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.15s; background: white;
+  }
+  .checkbox-item input:checked + .custom-checkbox {
+    background: #2563eb; border-color: #2563eb;
+  }
+  .custom-checkbox svg { width: 10px; height: 10px; display: none; }
+  .checkbox-item input:checked + .custom-checkbox svg { display: block; }
+  .checkbox-label { font-size: 13.5px; color: #374151; }
+  .radio-item { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; }
+  .radio-item input[type="radio"] { display: none; }
+  .custom-radio {
+    width: 16px; height: 16px; border: 1.5px solid #d1d5db; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: white;
+  }
+  .custom-radio-dot { width: 8px; height: 8px; border-radius: 50%; background: transparent; transition: background 0.15s; }
+  .radio-item input:checked + .custom-radio { border-color: #2563eb; }
+  .radio-item input:checked + .custom-radio .custom-radio-dot { background: #2563eb; }
+
+  /* Toggle */
+  .toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .toggle { width: 38px; height: 22px; background: #e5e7eb; border-radius: 11px; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .toggle.on { background: #2563eb; }
+  .toggle-thumb { width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.on .toggle-thumb { left: 18px; }
+  .toggle-label { font-size: 13.5px; color: #374151; }
+  .more-select {
+    width: 100%; border: 1.5px solid #e5e7eb; border-radius: 8px;
+    padding: 9px 12px; font-size: 13.5px; color: #374151; background: white;
+    outline: none; cursor: pointer; font-family: 'Inter', sans-serif; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+
+  /* Budget range */
+  .filter-divider { border: none; border-top: 1px solid #f3f4f6; margin: 20px 0; }
+  .budget-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .budget-title { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #111827; text-transform: uppercase; }
+  .budget-range { font-size: 12.5px; font-weight: 600; color: #2563eb; }
+  .range-labels { display: flex; justify-content: space-between; margin-top: 6px; }
+  .range-label { font-size: 11.5px; color: #9ca3af; }
+  .range-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 2px; background: linear-gradient(to right, #bfdbfe 0%, #2563eb 30%, #2563eb 75%, #bfdbfe 75%); outline: none; cursor: pointer; }
+  .range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #2563eb; border: 2.5px solid white; box-shadow: 0 1px 4px rgba(37,99,235,0.4); cursor: pointer; }
+
+  /* ── FEATURED ── */
+  .featured { padding: 56px 40px 48px; }
+  .featured-header { display: flex; justify-content: space-between; align-items: flex-end; max-width: 960px; margin: 0 auto 24px; }
+  .featured-header-left h2 { font-size: 24px; font-weight: 800; color: #111827; }
+  .featured-header-left p { font-size: 13.5px; color: #6b7280; margin-top: 4px; }
+  .view-all { font-size: 13.5px; font-weight: 600; color: #2563eb; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+  .view-all:hover { text-decoration: underline; }
+  .properties-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 960px; margin: 0 auto; }
+
+  .property-card {
+    border: 1.5px solid #e5e7eb; border-radius: 14px; overflow: hidden;
+    background: white; transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .property-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.1); transform: translateY(-2px); }
+  .card-img { position: relative; height: 160px; overflow: hidden; background: #f3f4f6; }
+  .card-img img { width: 100%; height: 100%; object-fit: cover; }
+  .card-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+  .badge-type {
+    position: absolute; top: 10px; left: 10px;
+    font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 5px; text-transform: uppercase;
+  }
+  .badge-flat { background: #dbeafe; color: #1d4ed8; }
+  .badge-pg { background: #dcfce7; color: #16a34a; }
+  .badge-coliving { background: #f3e8ff; color: #7c3aed; }
+  .badge-status {
+    position: absolute; top: 10px; right: 36px;
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 5px;
+  }
+  .badge-available { background: #dcfce7; color: #16a34a; }
+  .badge-full { background: #fee2e2; color: #dc2626; }
+  .card-heart {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px; background: white; border-radius: 50%;
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .card-heart svg { width: 14px; height: 14px; color: #9ca3af; }
+  .card-heart.liked svg { color: #ef4444; fill: #ef4444; }
+
+  .card-body { padding: 14px 14px 12px; }
+  .card-title { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+  .card-location { font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 4px; margin-bottom: 8px; }
+  .card-location svg { width: 11px; height: 11px; flex-shrink: 0; }
+  .card-rating { display: flex; align-items: center; gap: 4px; float: right; margin-top: -22px; }
+  .rating-star { color: #f59e0b; font-size: 13px; }
+  .rating-val { font-size: 12.5px; font-weight: 700; color: #111827; }
+  .rating-count { font-size: 11.5px; color: #9ca3af; }
+
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+  .tag {
+    font-size: 11px; color: #6b7280; background: #f3f4f6; padding: 2px 7px;
+    border-radius: 4px; display: flex; align-items: center; gap: 3px;
+  }
+  .tag svg { width: 10px; height: 10px; }
+  .tag.highlight { background: #eff6ff; color: #2563eb; }
+  .tag.orange { background: #fff7ed; color: #ea580c; }
+  .tag.green { background: #f0fdf4; color: #16a34a; }
+
+  .card-extra-info { font-size: 11px; color: #6b7280; margin-bottom: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .card-extra-info span { display: flex; align-items: center; gap: 3px; }
+  .card-extra-info svg { width: 10px; height: 10px; }
+
+  .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid #f3f4f6; margin-top: 8px; }
+  .card-price { font-size: 17px; font-weight: 800; color: #1a1a2e; }
+  .card-price sub { font-size: 11px; font-weight: 400; color: #6b7280; }
+  .card-actions { display: flex; gap: 6px; }
+  .btn-view {
+    font-size: 12px; font-weight: 600; color: #374151; background: white;
+    border: 1.5px solid #e5e7eb; border-radius: 7px; padding: 5px 10px; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .btn-view:hover { border-color: #2563eb; color: #2563eb; }
+  .btn-view svg { width: 12px; height: 12px; }
+  .btn-book {
+    font-size: 12px; font-weight: 600; color: white; background: #2563eb;
+    border: none; border-radius: 7px; padding: 5px 10px; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+  .btn-book:hover { background: #1d4ed8; }
+  .btn-book svg { width: 12px; height: 12px; }
+
+  /* ── HOW IT WORKS ── */
+  .how-it-works { padding: 56px 40px 48px; background: #fafafa; }
+  .hiw-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 960px; margin: 0 auto; }
+  .hiw-card { background: white; border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 28px 24px; position: relative; }
+  .hiw-number { position: absolute; top: 18px; right: 20px; font-size: 28px; font-weight: 800; color: #f3f4f6; line-height: 1; }
+  .hiw-icon {
+    width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+  }
+  .hiw-icon.blue { background: #eff6ff; }
+  .hiw-icon.purple { background: #f5f3ff; }
+  .hiw-icon.green { background: #f0fdf4; }
+  .hiw-icon svg { width: 22px; height: 22px; }
+  .hiw-title { font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+  .hiw-desc { font-size: 13px; color: #6b7280; line-height: 1.65; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { padding: 56px 40px 48px; background: #f8faff; }
+  .test-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 960px; margin: 0 auto; }
+  .test-card { background: white; border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 24px; }
+  .test-quote-icon { font-size: 24px; color: #dbeafe; margin-bottom: 12px; }
+  .test-text { font-size: 13px; color: #374151; line-height: 1.7; margin-bottom: 16px; }
+  .test-author { display: flex; align-items: center; gap: 10px; }
+  .test-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .test-name { font-size: 13px; font-weight: 700; color: #111827; }
+  .test-role { font-size: 11.5px; color: #9ca3af; }
+  .test-stars { margin-left: auto; color: #f59e0b; font-size: 13px; }
+
+  /* ── CTA ── */
+  .cta-section {
+    margin: 48px 40px; border-radius: 20px;
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+    padding: 52px 40px; text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: ''; position: absolute; width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); top: -60px; left: -40px;
+  }
+  .cta-section::after {
+    content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); bottom: -80px; right: -60px;
+  }
+  .cta-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px; padding: 4px 12px; font-size: 12px; color: white;
+    font-weight: 600; margin-bottom: 20px;
+  }
+  .cta-section h2 { font-size: 34px; font-weight: 800; color: white; margin-bottom: 12px; }
+  .cta-section p { font-size: 15px; color: rgba(255,255,255,0.8); margin-bottom: 28px; }
+  .cta-btns { display: flex; justify-content: center; gap: 14px; position: relative; z-index: 1; }
+  .btn-cta-primary {
+    background: white; color: #2563eb; border: none; border-radius: 10px;
+    padding: 12px 24px; font-size: 14.5px; font-weight: 700; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: transform 0.15s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-cta-primary:hover { transform: translateY(-1px); }
+  .btn-cta-outline {
+    background: transparent; color: white; border: 2px solid rgba(255,255,255,0.7);
+    border-radius: 10px; padding: 12px 24px; font-size: 14.5px; font-weight: 700;
+    cursor: pointer; font-family: 'Inter', sans-serif; transition: border-color 0.2s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-cta-outline:hover { border-color: white; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0f172a; color: #94a3b8; padding: 56px 64px 0;
+  }
+  .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1.2fr 1.2fr; gap: 48px; padding-bottom: 40px; }
+  .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; text-decoration: none; }
+  .footer-logo-icon { width: 36px; height: 36px; background: #2563eb; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .footer-logo-icon svg { width: 20px; height: 20px; fill: white; }
+  .footer-logo-text { font-size: 16px; font-weight: 700; color: white; }
+  .footer-logo-text span { color: #3b82f6; }
+  .footer-desc { font-size: 13px; line-height: 1.7; margin-bottom: 20px; color: #94a3b8; }
+  .social-links { display: flex; gap: 8px; }
+  .social-btn {
+    width: 34px; height: 34px; border: 1px solid #1e293b; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s; text-decoration: none;
+  }
+  .social-btn:hover { border-color: #2563eb; background: rgba(37,99,235,0.1); }
+  .social-btn svg { width: 15px; height: 15px; color: #94a3b8; }
+  .social-btn.active { border-color: #2563eb; background: rgba(37,99,235,0.15); }
+
+  footer h4 { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: white; margin-bottom: 18px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 10px; }
+  .footer-links a {
+    font-size: 13.5px; color: #94a3b8; text-decoration: none; transition: color 0.2s;
+    display: block; padding: 6px 10px; border-radius: 6px; transition: all 0.2s;
+  }
+  .footer-links a:hover { color: #60a5fa; background: rgba(37,99,235,0.08); }
+  .footer-links a.highlighted { border: 1px solid #1e3a5f; border-radius: 6px; }
+
+  .footer-contact { list-style: none; }
+  .footer-contact li { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; font-size: 13.5px; }
+  .footer-contact svg { width: 15px; height: 15px; color: #60a5fa; flex-shrink: 0; margin-top: 1px; }
+  .btn-watch-how {
+    display: flex; align-items: center; gap: 8px; margin-top: 16px;
+    background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 600;
+    color: #f87171; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+    text-decoration: none; width: fit-content;
+  }
+  .btn-watch-how:hover { background: rgba(239,68,68,0.25); }
+  .btn-watch-how .play-circle { width: 18px; height: 18px; border-radius: 50%; background: #ef4444; display: flex; align-items: center; justify-content: center; }
+  .btn-watch-how .play-circle svg { width: 8px; height: 8px; fill: white; margin-left: 1px; }
+
+  .newsletter-input {
+    width: 100%; padding: 10px 14px; border: 1px solid #1e293b; border-radius: 8px;
+    background: #1e293b; color: white; font-size: 13.5px; outline: none; margin-bottom: 10px;
+    font-family: 'Inter', sans-serif; transition: border-color 0.2s;
+  }
+  .newsletter-input::placeholder { color: #475569; }
+  .newsletter-input:focus { border-color: #2563eb; }
+  .btn-subscribe {
+    width: 100%; background: #2563eb; color: white; border: none; border-radius: 8px;
+    padding: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: 'Inter', sans-serif; transition: background 0.2s;
+  }
+  .btn-subscribe:hover { background: #1d4ed8; }
+  .btn-subscribe svg { width: 15px; height: 15px; }
+
+  .footer-bottom {
+    border-top: 1px solid #1e293b; padding: 18px 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom-left { font-size: 13px; color: #475569; }
+  .footer-bottom-right { display: flex; gap: 20px; }
+  .footer-bottom-right a { font-size: 13px; color: #475569; text-decoration: none; transition: color 0.2s; }
+  .footer-bottom-right a:hover { color: #94a3b8; }
+
+  /* Property photos — real room-style images to match the screenshots */
+  .card-img { background-size: cover; background-position: center; }
+  .card-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.02), rgba(0,0,0,0.03)); pointer-events: none; }
+  .img-koramangala { background-image: url("https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=900&q=80"); }
+  .img-indiranagar { background-image: url("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80"); }
+  .img-whitefield { background-image: url("https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80"); }
+  .img-hsr { background-image: url("https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=900&q=80"); }
+  .img-ecity { background-image: url("https://images.unsplash.com/photo-1560448075-bb485b067938?auto=format&fit=crop&w=900&q=80"); }
+  .img-marathahalli { background-image: url("https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80"); }
+
+  /* Responsive behaviour while preserving the desktop screenshot layout */
+  @media (max-width: 1024px) {
+    .navbar { padding: 0 18px; gap: 18px; }
+    .nav-search { max-width: 170px; }
+    .filter-card, .featured-header, .properties-grid, .hiw-grid, .test-grid { max-width: 92vw; }
+    footer { padding-left: 36px; padding-right: 36px; }
+  }
+  @media (max-width: 860px) {
+    .navbar { height: auto; min-height: 56px; flex-wrap: wrap; padding: 10px 16px; }
+    .nav-links { order: 3; width: 100%; justify-content: center; }
+    .nav-search { max-width: none; flex: 1; }
+    .hero h1 { font-size: 36px; }
+    .search-bar { width: calc(100% - 32px); flex-wrap: wrap; }
+    .search-field { flex: 1 1 30%; }
+    .search-btn { flex: 1 1 100%; justify-content: center; }
+    .properties-grid, .hiw-grid, .test-grid { grid-template-columns: 1fr 1fr; }
+    .filter-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .hero { padding-top: 52px; }
+    .hero h1 { font-size: 30px; }
+    .hero-stats { gap: 22px; }
+    .hero-actions, .cta-btns { flex-direction: column; }
+    .quick-filters, .featured, .how-it-works, .testimonials { padding-left: 18px; padding-right: 18px; }
+    .properties-grid, .hiw-grid, .test-grid, .footer-grid { grid-template-columns: 1fr; }
+    .cta-section { margin-left: 18px; margin-right: 18px; padding: 42px 18px; }
+    footer { padding: 44px 22px 0; }
+    .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+
+  </style>
+  
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="#" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <span class="logo-text">Nest<span>Bangalore</span></span>
+  </a>
+  <nav class="nav-links">
+    <a href="#" class="active">Home</a>
+    <a href="#explore-rentals">Explore Rentals</a>
+    <a href="#pgfinder">PG Finder</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="nav-search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" placeholder="Search area, locality...">
+  </div>
+  <div class="nav-right">
+    <button class="btn-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    </button>
+    <button class="btn-login">Login</button>
+    <button class="btn-signup">Sign Up</button>
+    <button class="btn-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </button>
+    <button class="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Find Your Perfect <span>PG or Flat</span> in Bangalore</h1>
+  <p>Discover verified PGs, co-living spaces & rental flats across Bangalore. Zero brokerage, genuine photos, instant booking.</p>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-value">12,000+</div>
+      <div class="stat-label">Verified Listings</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">50,000+</div>
+      <div class="stat-label">Happy Tenants</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">0</div>
+      <div class="stat-label">Brokerage Fees</div>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar" id="searchBar">
+    <div class="search-field" id="locationField" onclick="toggleDropdown(this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 0 16c-4.4 0-8-5.4-8-8a8 8 0 0 1 8-8z"/></svg>
+      <span style="font-size:13.5px;color:#374151;flex:1" id="locationText">Location</span>
+      <span class="search-field-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></span>
+      <div class="dropdown-menu open" id="locationDropdown" onclick="event.stopPropagation()">
+        <a href="#" onclick="selectLocation('WiFi',event)">WiFi</a>
+        <a href="#" onclick="selectLocation('Food Included',event)">Food Included</a>
+        <a href="#" onclick="selectLocation('AC Rooms',event)">AC Rooms</a>
+        <a href="#" onclick="selectLocation('Parking',event)">Parking</a>
+      </div>
+    </div>
+    <div class="search-field">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <select>
+        <option value="">Budget</option>
+        <option>₹5,000 – ₹10,000</option>
+        <option>₹10,000 – ₹20,000</option>
+        <option>₹20,000 – ₹35,000</option>
+        <option>₹35,000+</option>
+      </select>
+    </div>
+    <div class="search-field" style="border-right:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <select>
+        <option value="">Type</option>
+        <option>PG</option>
+        <option>Flat</option>
+        <option>Co-Living</option>
+      </select>
+    </div>
+    <button class="search-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Search
+    </button>
+  </div>
+
+  <div class="hero-actions">
+    <a href="#explore-rentals" class="btn-explore">Explore Rentals <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    <a href="#" class="btn-demo">
+      <div class="play-icon"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      Watch Demo Video
+    </a>
+  </div>
+</section>
+
+<!-- QUICK FILTERS -->
+<section class="quick-filters" id="pgfinder">
+  <h2 class="section-title">Quick Filters</h2>
+  <p class="section-sub">Narrow down your search with smart filters</p>
+  <div class="filter-card">
+    <div class="filter-grid">
+      <!-- Amenities -->
+      <div>
+        <div class="filter-group-title">Amenities</div>
+        <label class="checkbox-item">
+          <input type="checkbox" checked onchange="styleCheckbox(this)">
+          <span class="custom-checkbox"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg></span>
+          <span class="checkbox-label">WiFi</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" checked onchange="styleCheckbox(this)">
+          <span class="custom-checkbox"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg></span>
+          <span class="checkbox-label">AC Rooms</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" onchange="styleCheckbox(this)">
+          <span class="custom-checkbox"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg></span>
+          <span class="checkbox-label">Food Included</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" onchange="styleCheckbox(this)">
+          <span class="custom-checkbox"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg></span>
+          <span class="checkbox-label">Parking</span>
+        </label>
+      </div>
+      <!-- Preferred For -->
+      <div>
+        <div class="filter-group-title">Preferred For</div>
+        <label class="radio-item">
+          <input type="radio" name="gender" value="male">
+          <span class="custom-radio"><span class="custom-radio-dot"></span></span>
+          <span class="checkbox-label">Male</span>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="gender" value="female" checked>
+          <span class="custom-radio"><span class="custom-radio-dot"></span></span>
+          <span class="checkbox-label">Female</span>
+        </label>
+        <label class="radio-item">
+          <input type="radio" name="gender" value="coliving">
+          <span class="custom-radio"><span class="custom-radio-dot"></span></span>
+          <span class="checkbox-label">Co-Living</span>
+        </label>
+      </div>
+      <!-- More Options -->
+      <div>
+        <div class="filter-group-title">More Options</div>
+        <div class="toggle-row">
+          <div class="toggle on" id="furnishedToggle" onclick="toggleFurnished()"><div class="toggle-thumb"></div></div>
+          <span class="toggle-label">Furnished Only</span>
+        </div>
+        <select class="more-select">
+          <option value="">@ Locality</option>
+          <option>Koramangala</option>
+          <option>Indiranagar</option>
+          <option>HSR Layout</option>
+          <option>Whitefield</option>
+          <option>Electronic City</option>
+          <option>Marathahalli</option>
+        </select>
+      </div>
+    </div>
+
+    <hr class="filter-divider">
+
+    <div class="budget-row">
+      <span class="budget-title">Budget Range</span>
+      <span class="budget-range" id="budgetDisplay">₹5,000 – ₹25,000</span>
+    </div>
+    <input type="range" class="range-slider" min="3000" max="50000" value="25000" id="budgetSlider" oninput="updateBudget(this)">
+    <div class="range-labels">
+      <span class="range-label">₹3,000</span>
+      <span class="range-label">₹50,000</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROPERTIES -->
+<section class="featured" id="explore">
+  <div class="featured-header">
+    <div class="featured-header-left">
+      <h2>Featured Properties</h2>
+      <p>Handpicked verified listings across Bangalore</p>
+    </div>
+    <a href="#" class="view-all">View All →</a>
+  </div>
+  <div class="properties-grid">
+
+    <!-- Card 1 -->
+    <div class="property-card">
+      <div class="card-img img-koramangala" role="img" aria-label="Spacious bedroom in Koramangala">
+        <span class="badge-type badge-flat">Flat</span>
+        <span class="badge-status badge-available">Available</span>
+        <button class="card-heart" onclick="toggleHeart(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-rating"><span class="rating-star">★</span><span class="rating-val">4.8</span><span class="rating-count">(124)</span></div>
+        <div class="card-title">Spacious 2BHK in Koramangala</div>
+        <div class="card-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Koramangala 5th Block</div>
+        <div class="card-tags">
+          <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg> WiFi</span>
+          <span class="tag">❄️ AC</span>
+          <span class="tag">🚗 Parking</span>
+          <span class="tag">🍽️ Food</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹18,000<sub>/mo</sub></div>
+          <div class="card-actions">
+            <button class="btn-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+            <button class="btn-book" onclick="bookVisit(this,'Spacious 2BHK in Koramangala')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Book Visit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="property-card">
+      <div class="card-img img-indiranagar" role="img" aria-label="Premium PG bedroom in Indiranagar">
+        <span class="badge-type badge-pg">PG</span>
+        <span class="badge-status badge-available">Available</span>
+        <button class="card-heart" onclick="toggleHeart(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-rating"><span class="rating-star">★</span><span class="rating-val">4.6</span><span class="rating-count">(89)</span></div>
+        <div class="card-title">Premium PG – Indiranagar</div>
+        <div class="card-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Indiranagar, 100ft Road</div>
+        <div class="card-extra-info">
+          <span class="tag highlight">Double Sharing</span>
+          <span class="tag orange">🍽️ Food Included</span>
+          <span class="tag green">🚇 100m from metro</span>
+        </div>
+        <div class="card-tags">
+          <span class="tag">WiFi</span>
+          <span class="tag">🍽️ Food</span>
+          <span class="tag">❄️ AC</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹9,500<sub>/mo</sub></div>
+          <div class="card-actions">
+            <button class="btn-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+            <button class="btn-book" onclick="bookVisit(this,'Premium PG – Indiranagar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Book Visit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="property-card">
+      <div class="card-img img-whitefield" role="img" aria-label="Modern co-living room in Whitefield">
+        <span class="badge-type badge-coliving">Co-living</span>
+        <span class="badge-status badge-available">Available</span>
+        <button class="card-heart" onclick="toggleHeart(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-rating"><span class="rating-star">★</span><span class="rating-val">4.7</span><span class="rating-count">(97)</span></div>
+        <div class="card-title">Modern Co-living – Whitefield</div>
+        <div class="card-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Whitefield, ITPL Road</div>
+        <div class="card-extra-info">
+          <span class="tag highlight">Private Room</span>
+          <span class="tag green">🚇 1.2km from metro</span>
+        </div>
+        <div class="card-tags">
+          <span class="tag">WiFi</span>
+          <span class="tag">❄️ AC</span>
+          <span class="tag">🚗 Parking</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹12,000<sub>/mo</sub></div>
+          <div class="card-actions">
+            <button class="btn-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+            <button class="btn-book" onclick="bookVisit(this,'Modern Co-living – Whitefield')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Book Visit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="property-card">
+      <div class="card-img img-hsr" role="img" aria-label="Furnished studio in HSR Layout">
+        <span class="badge-type badge-flat">Flat</span>
+        <span class="badge-status badge-full" style="background:#fee2e2;color:#dc2626">Full</span>
+        <button class="card-heart" onclick="toggleHeart(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-rating"><span class="rating-star">★</span><span class="rating-val">4.5</span><span class="rating-count">(44)</span></div>
+        <div class="card-title">Furnished Studio – HSR Layout</div>
+        <div class="card-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> HSR Layout, Sector 7</div>
+        <div class="card-tags">
+          <span class="tag">WiFi</span>
+          <span class="tag">❄️ AC</span>
+          <span class="tag">🚗 Parking</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹14,000<sub>/mo</sub></div>
+          <div class="card-actions">
+            <button class="btn-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+            <button class="btn-book" onclick="bookVisit(this,'Furnished Studio – HSR Layout')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Book Visit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="property-card">
+      <div class="card-img img-ecity" role="img" aria-label="Boys PG room in Electronic City">
+        <span class="badge-type badge-pg">PG</span>
+        <span class="badge-status badge-available">Available</span>
+        <button class="card-heart" onclick="toggleHeart(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-rating"><span class="rating-star">★</span><span class="rating-val">4.3</span><span class="rating-count">(55)</span></div>
+        <div class="card-title">Boys PG – Electronic City</div>
+        <div class="card-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Electronic City Phase 1</div>
+        <div class="card-extra-info">
+          <span class="tag highlight">Triple Sharing</span>
+          <span class="tag orange">🍽️ Food Included</span>
+          <span class="tag green">🚇 2km from metro</span>
+        </div>
+        <div class="card-tags">
+          <span class="tag">WiFi</span>
+          <span class="tag">🍽️ Food</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹7,000<sub>/mo</sub></div>
+          <div class="card-actions">
+            <button class="btn-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+            <button class="btn-book" onclick="bookVisit(this,'Boys PG – Electronic City')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Book Visit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="property-card">
+      <div class="card-img img-marathahalli" role="img" aria-label="3BHK flat in Marathahalli">
+        <span class="badge-type badge-flat">Flat</span>
+        <span class="badge-status badge-available">Available</span>
+        <button class="card-heart" onclick="toggleHeart(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="card-rating"><span class="rating-star">★</span><span class="rating-val">4.9</span><span class="rating-count">(31)</span></div>
+        <div class="card-title">3BHK Flat – Marathahalli</div>
+        <div class="card-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Marathahalli, Outer Ring Road</div>
+        <div class="card-tags">
+          <span class="tag">WiFi</span>
+          <span class="tag">❄️ AC</span>
+          <span class="tag">🚗 Parking</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">₹22,000<sub>/mo</sub></div>
+          <div class="card-actions">
+            <button class="btn-view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg> View</button>
+            <button class="btn-book" onclick="bookVisit(this,'3BHK Flat – Marathahalli')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Book Visit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-it-works">
+  <h2 class="section-title">How It Works</h2>
+  <p class="section-sub">Find your ideal home in 3 easy steps</p>
+  <div class="hiw-grid">
+    <div class="hiw-card">
+      <div class="hiw-number">01</div>
+      <div class="hiw-icon blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="hiw-title">Search</div>
+      <div class="hiw-desc">Browse thousands of verified PGs, flats & co-living spaces with detailed filters for your exact needs.</div>
+    </div>
+    <div class="hiw-card">
+      <div class="hiw-number">02</div>
+      <div class="hiw-icon purple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="hiw-title">Compare</div>
+      <div class="hiw-desc">Compare multiple properties side-by-side on price, amenities, location and ratings to make the best choice.</div>
+    </div>
+    <div class="hiw-card">
+      <div class="hiw-number">03</div>
+      <div class="hiw-icon green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="hiw-title">Move In</div>
+      <div class="hiw-desc">Book a visit, sign digitally, and move in — all paperwork done online with zero brokerage fees.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <h2 class="section-title">What Our Tenants Say</h2>
+  <p class="section-sub">Trusted by thousands across Bangalore</p>
+  <div class="test-grid">
+    <div class="test-card">
+      <div class="test-quote-icon">❝❞</div>
+      <div class="test-text">"Found my perfect PG in Koramangala within 2 days! The filter system is incredibly useful and all listings were verified. Saved me weeks of searching."</div>
+      <div class="test-author">
+        <div class="test-avatar" style="background:#6366f1">PS</div>
+        <div>
+          <div class="test-name">Kshitij Mathur</div>
+          <div class="test-role">Software Engineer</div>
+        </div>
+        <div class="test-stars">★★★★★</div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="test-quote-icon">❝❞</div>
+      <div class="test-text">"Moved from Chennai to Bangalore and NestBangalore made the transition seamless. The Book Visit feature is a game-changer."</div>
+      <div class="test-author">
+        <div class="test-avatar" style="background:#ec4899">RN</div>
+        <div>
+          <div class="test-name">Agam Singh</div>
+          <div class="test-role">Product Manager</div>
+        </div>
+        <div class="test-stars">★★★★★</div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="test-quote-icon">❝❞</div>
+      <div class="test-text">"Zero brokerage and genuine photos — exactly what I needed. Found a co-living space in HSR Layout with all amenities. Highly recommend!"</div>
+      <div class="test-author">
+        <div class="test-avatar" style="background:#f59e0b">AR</div>
+        <div>
+          <div class="test-name">Amit Nikhade</div>
+          <div class="test-role">Data Analyst</div>
+        </div>
+        <div class="test-stars">★★★★★</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    100% Verified Listings
+  </div>
+  <h2>Ready to Find Your Home in Bangalore?</h2>
+  <p>Join 50,000+ happy tenants who found their perfect PG or flat with NestBangalore.</p>
+  <div class="cta-btns">
+    <a href="#explore-rentals" class="btn-cta-primary">Start Exploring</a>
+    <a href="#pgfinder" class="btn-cta-outline">Find a PG</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div>
+      <a href="#" class="footer-logo">
+        <div class="footer-logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <span class="footer-logo-text">Nest<span>Bangalore</span></span>
+      </a>
+      <p class="footer-desc">Bangalore's most trusted platform for PG, co-living & flat rentals. Verified listings, zero brokerage, instant booking.</p>
+      <div class="social-links">
+        <a href="#" class="social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+        </a>
+        <a href="#" class="social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" class="social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="#" class="social-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" class="social-btn active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul class="footer-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#explore-rentals" class="highlighted">Explore Rentals</a></li>
+        <li><a href="#pgfinder" class="highlighted">PG Finder</a></li>
+        <li><a href="#contact" class="highlighted">Contact Us</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <ul class="footer-contact">
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Koramangala, Bangalore — 560034</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>+91 98765 43210</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span>hello@nestbangalore.in</span>
+        </li>
+      </ul>
+      <a href="#" class="btn-watch-how">
+        <div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        Watch How It Works
+      </a>
+    </div>
+    <div>
+      <h4>Newsletter</h4>
+      <p style="font-size:13px;margin-bottom:16px;line-height:1.6">Get the latest PG & flat listings delivered to your inbox.</p>
+      <input type="email" class="newsletter-input" placeholder="Your email address">
+      <button class="btn-subscribe">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Subscribe
+      </button>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-left">© 2026 NestBangalore. All rights reserved.</div>
+    <div class="footer-bottom-right">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<!-- BOOK VISIT MODAL -->
+<style>
+.modal.booking-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:10000;align-items:center;justify-content:center;padding:24px}.modal.booking-modal.open{display:flex}.booking-card{width:min(448px,calc(100vw - 32px));background:#fff;border-radius:20px;padding:34px 32px 32px;box-shadow:0 30px 90px rgba(0,0,0,.38);position:relative}.booking-close{position:absolute;right:32px;top:30px;width:34px;height:34px;border:1px solid #dfe6f0;border-radius:8px;background:#fff;color:#64748b;font-size:26px;line-height:1;display:grid;place-items:center;cursor:pointer}.booking-title{font-size:22px!important;line-height:1.2;font-weight:900!important;color:#111827!important;margin:0 46px 8px 0!important}.booking-subtitle{font-size:14px!important;color:#64748b!important;margin:0 0 26px 0!important}.booking-field{margin-bottom:18px}.booking-label{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 8px 0!important;font-size:14px!important;font-weight:850!important;color:#1f2937!important}.booking-label svg{width:15px;height:15px;color:#2563eb;flex-shrink:0}.booking-input{width:100%!important;height:45px!important;border:1.5px solid #e1e7ef!important;background:#f8fafc!important;border-radius:9px!important;padding:0 14px!important;outline:none!important;color:#111827!important;font-size:14px!important}.booking-input::placeholder{color:#9aa4b2}.booking-input:focus{border-color:#2563eb!important;background:#fff!important;box-shadow:0 0 0 3px rgba(37,99,235,.08)}.booking-confirm{width:100%!important;height:48px!important;border:0!important;border-radius:9px!important;background:#2f6fed!important;color:#fff!important;font-size:16px!important;font-weight:900!important;margin-top:4px!important;cursor:pointer!important;box-shadow:0 10px 24px rgba(47,111,237,.28)}.booking-confirm:hover{background:#245fd8!important}@media(max-width:520px){.booking-card{padding:30px 24px}.booking-close{right:24px;top:24px}.booking-title{font-size:20px!important}}
+</style>
+<div id="modal" class="modal booking-modal" aria-hidden="true">
+  <div class="booking-card" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+    <button class="booking-close close" onclick="closeModal()" aria-label="Close">×</button>
+    <h3 id="bookingTitle" class="booking-title">Book a Visit</h3>
+    <p id="modalProperty" class="booking-subtitle">Modern Co-living – Whitefield</p>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        Full Name
+      </label>
+      <input class="booking-input" type="text" placeholder="Enter your full name">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Phone Number
+      </label>
+      <input class="booking-input" type="tel" placeholder="+91 XXXXX XXXXX">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Preferred Date
+      </label>
+      <input class="booking-input" type="date">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Preferred Time
+      </label>
+      <input class="booking-input" type="time">
+    </div>
+
+    <button class="booking-confirm confirm" onclick="confirmVisit()">Confirm Booking</button>
+  </div>
+</div>
+
+</template>
+
+<template id="explore-template">
+  <style>
+  :host{display:block;font-family:'Inter',sans-serif;color:#111827;background:#f4f7fb;min-height:100vh;} a{text-decoration:none;color:inherit;} button,input,select{font-family:'Inter',sans-serif;}
+  
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;color:#111827;background:#f4f7fb;min-height:100vh}
+  a{text-decoration:none;color:inherit}
+  button,input,select{font-family:'Inter',sans-serif}
+
+  /* NAVBAR */
+  .navbar{position:sticky;top:0;z-index:50;height:56px;background:#fff;border-bottom:1px solid #e8eaf0;display:flex;align-items:center;padding:0 20px;gap:24px;box-shadow:0 1px 3px rgba(15,23,42,.02)}
+  .logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .logo-icon{width:30px;height:30px;background:#2f80ed;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .logo-icon svg{width:17px;height:17px;fill:#fff}
+  .logo-text{font-size:14.5px;font-weight:800;color:#101827;letter-spacing:-.1px}
+  .logo-text span{color:#1d8bd7}
+  .nav-links{display:flex;align-items:center;gap:4px}
+  .nav-links a{font-size:11px;font-weight:600;color:#4b5563;padding:8px 11px;border-radius:7px;transition:.18s}
+  .nav-links a:hover,.nav-links a.active{background:#eef5ff;color:#2563eb}
+  .nav-search{margin-left:auto;width:230px;position:relative;display:flex;align-items:center}
+  .nav-search svg{position:absolute;left:11px;width:13px;height:13px;color:#9ca3af}
+  .nav-search input{width:100%;height:34px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;padding:0 12px 0 32px;font-size:12px;color:#374151;outline:none}
+  .nav-right{display:flex;align-items:center;gap:8px}
+  .btn-icon{width:32px;height:32px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;color:#607086;cursor:pointer}
+  .btn-login{border:0;background:#fff;color:#111827;font-weight:700;font-size:12px;padding:7px 10px;border-radius:7px;cursor:pointer}
+  .btn-signup{border:0;background:#2563eb;color:#fff;font-size:12px;font-weight:700;padding:8px 13px;border-radius:8px;cursor:pointer}
+  .hamburger{width:32px;height:32px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;cursor:pointer}
+  .hamburger span{width:14px;height:1.5px;background:#687386;border-radius:4px}
+
+  /* PAGE HERO */
+  .page-hero{height:112px;position:relative;overflow:hidden;background:#0f4fbf;display:flex;align-items:center}
+  .page-hero::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(37,99,235,.96),rgba(30,64,175,.78)),url('https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1400&q=70') center/cover;filter:saturate(.85)}
+  .page-hero::after{content:'';position:absolute;right:-120px;top:-180px;width:460px;height:460px;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 62%)}
+  .hero-inner{position:relative;width:100%;max-width:1260px;margin:0 auto;padding:0 40px;color:#fff}
+  .hero-inner h1{font-size:32px;line-height:1.05;font-weight:850;letter-spacing:-.6px;margin-bottom:10px}
+  .hero-inner p{font-size:13px;color:rgba(255,255,255,.86);font-weight:500;margin-bottom:14px}
+  .hero-chips{display:flex;gap:8px;align-items:center}
+  .chip{font-size:11px;font-weight:800;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:5px 10px;border-radius:15px;display:inline-flex;align-items:center;gap:5px}
+  .chip.clear{background:transparent;color:#dbeafe;border-color:rgba(255,255,255,.28)}
+
+  /* CONTENT */
+  .explore-wrap{max-width:1260px;margin:0 auto;padding:30px 24px 56px;display:grid;grid-template-columns:250px 1fr;gap:24px;align-items:start}
+  .filters{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(15,23,42,.03);position:sticky;top:72px}
+  .filters-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:#111827;margin-bottom:18px}
+  .filters-title svg{width:16px;height:16px;color:#2563eb}
+  .filter-search{position:relative;margin-bottom:18px}
+  .filter-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:13px;height:13px;color:#9ca3af}
+  .filter-search input{width:100%;height:37px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;font-size:12.5px;padding:0 11px 0 32px;outline:none;color:#374151}
+  .filter-section{border-top:1px solid #edf0f5;padding:16px 0 0;margin-top:16px}
+  .filter-section:first-of-type{border-top:0;padding-top:0;margin-top:0}
+  .filter-heading{font-size:11px;letter-spacing:.9px;text-transform:uppercase;font-weight:850;color:#111827;margin-bottom:11px}
+  .side-select{height:38px;width:100%;border:1.5px solid #e5e7eb;border-radius:8px;background:white;color:#7a869a;padding:0 12px;font-size:12.5px;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+  .check,.radio-line{display:flex;align-items:center;gap:9px;margin:9px 0;font-size:12.5px;font-weight:600;color:#374151;cursor:pointer}
+  .check input,.radio-line input{display:none}
+  .box{width:17px;height:17px;border:1.6px solid #cfd7e4;border-radius:5px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .check input:checked + .box{background:#2563eb;border-color:#2563eb}
+  .check input:checked + .box::after{content:'✓';font-size:11px;color:white;font-weight:900;line-height:1}
+  .radio{width:17px;height:17px;border:1.6px solid #cfd7e4;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .radio-line input:checked + .radio{border-color:#2563eb}
+  .radio-line input:checked + .radio::after{content:'';width:8px;height:8px;background:#2563eb;border-radius:50%}
+  .toggle-line{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;color:#374151}
+  .toggle{width:39px;height:22px;border-radius:999px;background:#dfe5ec;position:relative;cursor:pointer;transition:.18s}
+  .toggle::after{content:'';width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.22);position:absolute;top:2px;left:2px;transition:.18s}
+  .toggle.on{background:#2563eb}
+  .toggle.on::after{left:19px}
+  .reset-btn{margin-top:18px;width:100%;height:38px;background:#fff;border:1.5px solid #e5e7eb;color:#2563eb;font-size:12px;font-weight:800;border-radius:8px;cursor:pointer}
+
+  .main-panel{min-width:0}
+  .results-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:16px}
+  .results-count{font-size:12.8px;color:#64748b;font-weight:500}
+  .results-count b{font-size:14px;color:#111827;font-weight:850}
+  .sort-select{width:170px;height:37px;border:1.5px solid #cfd7e4;border-radius:9px;background:white;color:#64748b;padding:0 12px;font-size:12.5px;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+  .tabs{background:#edf2f7;border-radius:9px;display:grid;grid-template-columns:repeat(4,1fr);height:40px;margin-bottom:22px;overflow:hidden;padding:2px}
+  .tab{border:0;background:transparent;color:#64748b;font-size:12px;font-weight:750;border-radius:7px;cursor:pointer;transition:.18s}
+  .tab.active{background:#fff;color:#2563eb;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+
+  .properties{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+  .property-card{background:#fff;border:1px solid #e7ebf0;border-radius:14px;overflow:hidden;box-shadow:0 6px 14px rgba(15,23,42,.055);transition:transform .2s,box-shadow .2s}
+  .property-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(15,23,42,.1)}
+  .card-img{height:166px;position:relative;background:#e5e7eb;overflow:hidden}
+  .card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+  .property-card:hover .card-img img{transform:scale(1.035)}
+  .image-fallback{display:none;width:100%;height:100%;align-items:center;justify-content:center;background:linear-gradient(135deg,#dbeafe,#fef3c7);font-size:38px}
+  .badge{position:absolute;top:10px;z-index:2;border-radius:6px;font-size:10px;font-weight:850;padding:4px 8px;line-height:1;color:white}
+  .badge.left{left:10px;background:#2563eb}
+  .badge.left.pg{background:#2563eb}
+  .badge.left.flat{background:#1d8cf8}
+  .badge.left.coliving{background:#1e68d7}
+  .badge.status{right:34px;background:#22c55e;color:#fff}
+  .badge.status.full{background:#fef2f2;color:#ef4444}
+  .heart{position:absolute;top:8px;right:8px;width:28px;height:28px;border:0;border-radius:50%;background:rgba(255,255,255,.94);display:flex;align-items:center;justify-content:center;color:#9aa5b5;box-shadow:0 1px 5px rgba(15,23,42,.18);cursor:pointer;z-index:2}
+  .heart svg{width:14px;height:14px}
+  .heart.liked{color:#ef4444}
+  .heart.liked svg{fill:#ef4444}
+  .card-body{padding:13px 15px 14px}
+  .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:5px}
+  .card-title{font-size:14px;font-weight:850;color:#111827;line-height:1.25}
+  .rating{display:flex;align-items:center;gap:3px;font-size:11px;color:#64748b;white-space:nowrap;padding-top:1px}
+  .rating .star{color:#f59e0b;font-size:13px}
+  .rating b{color:#111827;font-size:11.5px}
+  .location{font-size:11.7px;color:#7b8797;display:flex;align-items:center;gap:4px;margin-bottom:9px}
+  .location svg{width:11px;height:11px;color:#7194c6}
+  .mini-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .tag{display:inline-flex;align-items:center;gap:3px;background:#f1f5f9;color:#64748b;border-radius:5px;font-size:10.5px;font-weight:700;padding:4px 7px;line-height:1}
+  .tag.blue{background:#eaf2ff;color:#2563eb}.tag.green{background:#f0fdf4;color:#16a34a}.tag.orange{background:#fff7ed;color:#ea580c}
+  .amenities{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+  .footer-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .price{font-size:17px;font-weight:900;color:#2563eb;letter-spacing:-.2px}
+  .price span{font-size:10.5px;font-weight:550;color:#778398;margin-left:1px}
+  .card-actions{display:flex;align-items:center;gap:7px}
+  .view-btn{height:29px;padding:0 12px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;color:#111827;font-size:11.4px;font-weight:800;display:flex;align-items:center;gap:4px;cursor:pointer}
+  .book-btn{height:29px;padding:0 11px;border:0;border-radius:7px;background:#2563eb;color:#fff;font-size:11.4px;font-weight:850;display:flex;align-items:center;gap:4px;cursor:pointer}
+  .view-btn svg,.book-btn svg{width:12px;height:12px}
+  .compare{display:inline-block;margin-top:14px;font-size:11.5px;font-weight:650;color:#7d8798;cursor:pointer}
+
+  /* FOOTER */
+  footer{background:#0f172a;color:#94a3b8;padding:56px 38px 0;margin-top:0}
+  .footer-grid{max-width:1260px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr 1.25fr 1.25fr;gap:64px;padding-bottom:74px}
+  .footer-logo{display:flex;align-items:center;gap:9px;margin-bottom:15px}
+  .footer-logo-icon{width:32px;height:32px;background:#2563eb;border-radius:8px;display:flex;align-items:center;justify-content:center}.footer-logo-icon svg{width:18px;height:18px;fill:white}
+  .footer-logo-text{font-size:14.5px;font-weight:850;color:white}.footer-logo-text span{color:#38a4ed}
+  .footer-desc{font-size:12.5px;line-height:1.8;max-width:210px;margin-bottom:22px;color:#a0aec0}
+  .social-links{display:flex;gap:9px}.social-btn{width:31px;height:31px;border-radius:7px;border:1px solid #1e293b;background:#172033;display:flex;align-items:center;justify-content:center;color:#94a3b8}.social-btn svg{width:14px;height:14px}.social-btn.active{border-color:#2563eb;background:#15365e}
+  .footer-col h4{font-size:11px;font-weight:850;color:white;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:22px}
+  .footer-links{list-style:none}.footer-links li{margin-bottom:12px}.footer-links a{font-size:12.2px;color:#94a3b8;transition:.18s}.footer-links a:hover{color:#60a5fa}
+  .footer-contact{list-style:none}.footer-contact li{display:flex;align-items:flex-start;gap:11px;font-size:12.5px;line-height:1.5;margin-bottom:12px}.footer-contact svg{width:14px;height:14px;color:#38a4ed;flex-shrink:0;margin-top:2px}
+  .watch-btn{margin-top:15px;display:flex;align-items:center;justify-content:center;gap:8px;width:202px;height:33px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.22);color:#f87171;border-radius:7px;font-size:12px;font-weight:850}.watch-btn svg{width:14px;height:14px;fill:#ef4444}
+  .newsletter-text{font-size:12.5px;line-height:1.7;margin-bottom:16px;color:#a0aec0}.newsletter-input{height:38px;width:100%;border:1px solid #263247;border-radius:7px;background:#1e293b;color:white;padding:0 13px;font-size:12.5px;outline:none;margin-bottom:10px}.newsletter-input::placeholder{color:#64748b}.subscribe{height:38px;width:100%;border:0;border-radius:7px;background:#2f80ed;color:white;font-size:13px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.subscribe svg{width:14px;height:14px}
+  .footer-bottom{max-width:1260px;margin:0 auto;border-top:1px solid #1e293b;height:56px;display:flex;align-items:center;justify-content:space-between}.footer-bottom-left,.footer-bottom-right a{font-size:12.2px;color:#64748b}.footer-bottom-right{display:flex;gap:18px}
+
+  /* MODAL */
+  .modal.booking-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:10000;align-items:center;justify-content:center;padding:24px}.modal.booking-modal.open{display:flex}.booking-card{width:min(448px,calc(100vw - 32px));background:#fff;border-radius:20px;padding:34px 32px 32px;box-shadow:0 30px 90px rgba(0,0,0,.38);position:relative}.booking-close{position:absolute;right:32px;top:30px;width:34px;height:34px;border:1px solid #dfe6f0;border-radius:8px;background:#fff;color:#64748b;font-size:26px;line-height:1;display:grid;place-items:center;cursor:pointer}.booking-title{font-size:22px!important;line-height:1.2;font-weight:900!important;color:#111827!important;margin:0 46px 8px 0!important}.booking-subtitle{font-size:14px!important;color:#64748b!important;margin:0 0 26px 0!important}.booking-field{margin-bottom:18px}.booking-label{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 8px 0!important;font-size:14px!important;font-weight:850!important;color:#1f2937!important}.booking-label svg{width:15px;height:15px;color:#2563eb;flex-shrink:0}.booking-input{width:100%!important;height:45px!important;border:1.5px solid #e1e7ef!important;background:#f8fafc!important;border-radius:9px!important;padding:0 14px!important;outline:none!important;color:#111827!important;font-size:14px!important}.booking-input::placeholder{color:#9aa4b2}.booking-input:focus{border-color:#2563eb!important;background:#fff!important;box-shadow:0 0 0 3px rgba(37,99,235,.08)}.booking-confirm{width:100%!important;height:48px!important;border:0!important;border-radius:9px!important;background:#2f6fed!important;color:#fff!important;font-size:16px!important;font-weight:900!important;margin-top:4px!important;cursor:pointer!important;box-shadow:0 10px 24px rgba(47,111,237,.28)}.booking-confirm:hover{background:#245fd8!important}@media(max-width:520px){.booking-card{padding:30px 24px}.booking-close{right:24px;top:24px}.booking-title{font-size:20px!important}}
+  @media(max-width:960px){.nav-search{display:none}.explore-wrap{grid-template-columns:1fr}.filters{position:static}.properties{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr;gap:34px}.hero-inner{padding:0 24px}}
+  @media(max-width:640px){.navbar{padding:0 12px;gap:10px}.nav-links{display:none}.btn-login,.btn-icon:nth-child(1),.btn-icon:nth-child(4){display:none}.page-hero{height:auto;padding:30px 0}.hero-inner h1{font-size:26px}.explore-wrap{padding:22px 14px 38px}.tabs{grid-template-columns:1fr 1fr;height:auto}.tab{height:38px}.footer-grid{grid-template-columns:1fr}.footer-bottom{height:auto;gap:12px;align-items:flex-start;padding:18px 0;flex-direction:column}.footer-bottom-right{flex-wrap:wrap}}
+
+  </style>
+  
+  <nav class="navbar">
+    <a href="#home" class="logo">
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div>
+      <span class="logo-text">Nest<span>Bangalore</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#explore-rentals" class="active">Explore Rentals</a>
+      <a href="#pgfinder">PG Finder</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search area, locality..."></div>
+    <div class="nav-right">
+      <button class="btn-icon" aria-label="Theme"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      <button class="btn-login">Login</button>
+      <button class="btn-signup">Sign Up</button>
+      <button class="btn-icon" aria-label="Account"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></button>
+      <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="hero-inner">
+      <h1>Explore Rentals in Bangalore</h1>
+      <p>Browse verified properties — PGs, Flats & Co-living spaces</p>
+      <div class="hero-chips"><span class="chip">₹8K - ₹15K</span><span class="chip">Furnished</span><span class="chip clear">Clear All</span></div>
+    </div>
+  </section>
+
+  <main class="explore-wrap">
+    <aside class="filters">
+      <div class="filters-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Filters</div>
+      <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search property..."></div>
+      <div class="filter-section"><div class="filter-heading">Area</div><select class="side-select"><option>@</option><option>Indiranagar</option><option>Whitefield</option><option>HSR Layout</option><option>Bellandur</option><option>Sarjapur</option></select></div>
+      <div class="filter-section"><div class="filter-heading">Budget (Monthly)</div>
+        <label class="radio-line"><input type="radio" name="budget"><span class="radio"></span>₹3K – ₹8K</label>
+        <label class="radio-line"><input type="radio" name="budget" checked><span class="radio"></span>₹8K – ₹15K</label>
+        <label class="radio-line"><input type="radio" name="budget"><span class="radio"></span>₹15K – ₹25K</label>
+        <label class="radio-line"><input type="radio" name="budget"><span class="radio"></span>₹25K+</label>
+      </div>
+      <div class="filter-section"><div class="filter-heading">Amenities</div>
+        <label class="check"><input type="checkbox"><span class="box"></span>WiFi</label>
+        <label class="check"><input type="checkbox"><span class="box"></span>Food Included</label>
+        <label class="check"><input type="checkbox"><span class="box"></span>AC Rooms</label>
+        <label class="check"><input type="checkbox"><span class="box"></span>Parking</label>
+      </div>
+      <div class="filter-section"><div class="filter-heading">Availability</div><div class="toggle-line"><span class="toggle" onclick="this.classList.toggle('on')"></span>Available Only</div></div>
+      <div class="filter-section"><div class="filter-heading">Furnishing</div><div class="toggle-line"><span class="toggle on" onclick="this.classList.toggle('on')"></span>Furnished Only</div></div>
+      <button class="reset-btn" onclick="showToast('All filters reset')">Reset All Filters</button>
+    </aside>
+
+    <section class="main-panel">
+      <div class="results-top">
+        <div class="results-count"><b>5 Properties Found</b> in Bangalore</div>
+        <select class="sort-select"><option></option><option>Price: Low to High</option><option>Rating: High to Low</option><option>Newest First</option></select>
+      </div>
+      <div class="tabs"><button class="tab active">All</button><button class="tab">Flats</button><button class="tab">PGs</button><button class="tab">Co-living</button></div>
+      <div class="properties">
+        <article class="property-card" data-type="pg">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=900&q=80" alt="Premium PG Indiranagar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="image-fallback">🛏️</div><span class="badge left pg">PG</span><span class="badge status">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div>
+          <div class="card-body"><div class="title-row"><h3 class="card-title">Premium PG - Indiranagar</h3><div class="rating"><span class="star">★</span><b>4.6</b><span>(89)</span></div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Indiranagar, 100ft Road</div><div class="mini-tags"><span class="tag blue">Double Sharing</span><span class="tag green">🍽 Food Included</span><span class="tag orange">🚇 500m from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">Food</span><span class="tag">AC</span></div><div class="footer-row"><div class="price">₹9,500<span>/mo</span></div><div class="card-actions"><button class="view-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>View</button><button class="book-btn" onclick="bookVisit('Premium PG - Indiranagar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Book Visit</button></div></div><a class="compare" onclick="showToast('Added to compare')">Add to Compare</a></div>
+        </article>
+
+        <article class="property-card" data-type="co-living">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=900&q=80" alt="Modern Co-living Whitefield" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="image-fallback">🏠</div><span class="badge left coliving">Co-living</span><span class="badge status">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div>
+          <div class="card-body"><div class="title-row"><h3 class="card-title">Modern Co-living - Whitefield</h3><div class="rating"><span class="star">★</span><b>4.7</b><span>(97)</span></div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Whitefield, ITPL Road</div><div class="mini-tags"><span class="tag orange">🚇 1.2km from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">AC</span><span class="tag">Parking</span></div><div class="footer-row"><div class="price">₹12,000<span>/mo</span></div><div class="card-actions"><button class="view-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>View</button><button class="book-btn" onclick="bookVisit('Modern Co-living - Whitefield')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Book Visit</button></div></div><a class="compare" onclick="showToast('Added to compare')">Add to Compare</a></div>
+        </article>
+
+        <article class="property-card" data-type="flat">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" alt="Furnished Studio HSR Layout" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="image-fallback">🛌</div><span class="badge left flat">Flat</span><span class="badge status full">Full</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div>
+          <div class="card-body"><div class="title-row"><h3 class="card-title">Furnished Studio - HSR Layout</h3><div class="rating"><span class="star">★</span><b>4.5</b><span>(44)</span></div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>HSR Layout, Sector 2</div><div class="amenities"><span class="tag">WiFi</span><span class="tag">AC</span><span class="tag">Parking</span></div><div class="footer-row"><div class="price">₹14,000<span>/mo</span></div><div class="card-actions"><button class="view-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>View</button><button class="book-btn" onclick="bookVisit('Furnished Studio - HSR Layout')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Book Visit</button></div></div><a class="compare" onclick="showToast('Added to compare')">Add to Compare</a></div>
+        </article>
+
+        <article class="property-card" data-type="pg">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80" alt="Girls PG Bellandur" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="image-fallback">👩‍💻</div><span class="badge left pg">PG</span><span class="badge status">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div>
+          <div class="card-body"><div class="title-row"><h3 class="card-title">Girls PG - Bellandur</h3><div class="rating"><span class="star">★</span><b>4.4</b><span>(38)</span></div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Bellandur, Outer Ring Road</div><div class="mini-tags"><span class="tag blue">Single Sharing</span><span class="tag green">Food Included</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">Food</span><span class="tag">AC</span></div><div class="footer-row"><div class="price">₹8,500<span>/mo</span></div><div class="card-actions"><button class="view-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>View</button><button class="book-btn" onclick="bookVisit('Girls PG - Bellandur')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Book Visit</button></div></div><a class="compare" onclick="showToast('Added to compare')">Add to Compare</a></div>
+        </article>
+
+        <article class="property-card" data-type="co-living">
+          <div class="card-img"><img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80" alt="Co-living Studio Sarjapur" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="image-fallback">🏙️</div><span class="badge left coliving">Co-living</span><span class="badge status">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div>
+          <div class="card-body"><div class="title-row"><h3 class="card-title">Co-living Studio - Sarjapur</h3><div class="rating"><span class="star">★</span><b>4.5</b><span>(22)</span></div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Sarjapur Road</div><div class="mini-tags"><span class="tag orange">🚇 2km from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">AC</span></div><div class="footer-row"><div class="price">₹11,000<span>/mo</span></div><div class="card-actions"><button class="view-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>View</button><button class="book-btn" onclick="bookVisit('Co-living Studio - Sarjapur')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Book Visit</button></div></div><a class="compare" onclick="showToast('Added to compare')">Add to Compare</a></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer id="contact">
+    <div class="footer-grid">
+      <div><a href="#home" class="footer-logo"><div class="footer-logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="footer-logo-text">Nest<span>Bangalore</span></span></a><p class="footer-desc">Bangalore's most trusted platform for PG, co-living & flat rentals. Verified listings, zero brokerage, instant booking.</p><div class="social-links"><a class="social-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a><a class="social-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/></svg></a><a class="social-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a><a class="social-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a><a class="social-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor"/></svg></a></div></div>
+      <div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="#home">Home</a></li><li><a href="#explore-rentals">Explore Rentals</a></li><li><a href="#pgfinder">PG Finder</a></li><li><a href="#contact">Contact Us</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul class="footer-contact"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Koramangala, Bangalore — 560034</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>+91 98765 43210</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>hello@nestbangalore.in</span></li></ul><a href="#home" class="watch-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Watch How It Works</a></div>
+      <div class="footer-col"><h4>Newsletter</h4><p class="newsletter-text">Get the latest PG & flat listings delivered to your inbox.</p><input class="newsletter-input" type="email" placeholder="Your email address"><button class="subscribe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Subscribe</button></div>
+    </div>
+    <div class="footer-bottom"><div class="footer-bottom-left">© 2026 NestBangalore. All rights reserved.</div><div class="footer-bottom-right"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div></div>
+  </footer>
+
+  <div id="modal" class="modal booking-modal" aria-hidden="true">
+  <div class="booking-card" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+    <button class="booking-close close" onclick="closeModal()" aria-label="Close">×</button>
+    <h3 id="bookingTitle" class="booking-title">Book a Visit</h3>
+    <p id="modalProperty" class="booking-subtitle">Modern Co-living – Whitefield</p>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        Full Name
+      </label>
+      <input class="booking-input" type="text" placeholder="Enter your full name">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Phone Number
+      </label>
+      <input class="booking-input" type="tel" placeholder="+91 XXXXX XXXXX">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Preferred Date
+      </label>
+      <input class="booking-input" type="date">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Preferred Time
+      </label>
+      <input class="booking-input" type="time">
+    </div>
+
+    <button class="booking-confirm confirm" onclick="confirmVisit()">Confirm Booking</button>
+  </div>
+</div>
+
+
+</template>
+
+
+<template id="pgfinder-template">
+  <style>
+    :host{display:block;font-family:'Inter',sans-serif;color:#111827;background:#f6f8fb;min-height:100vh} *{box-sizing:border-box;margin:0;padding:0} a{text-decoration:none} button,input,select{font-family:'Inter',sans-serif}
+    .navbar{position:sticky;top:0;z-index:100;height:54px;background:rgba(255,255,255,.97);border-bottom:1px solid #e8edf4;display:flex;align-items:center;padding:0 36px;gap:26px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+    .logo{display:flex;align-items:center;gap:8px;flex-shrink:0}.logo-icon{width:30px;height:30px;border-radius:8px;background:#2f80ed;display:grid;place-items:center}.logo-icon svg{width:17px;height:17px;fill:#fff}.logo-text{font-weight:800;font-size:15px;color:#15213b}.logo-text span{color:#2489e8}.nav-links{display:flex;align-items:center;gap:5px}.nav-links a{font-size:12.3px;color:#506174;padding:7px 11px;border-radius:7px;font-weight:600}.nav-links a:hover,.nav-links a.active{background:#edf5ff;color:#2563eb}.nav-search{margin-left:auto;width:260px;position:relative}.nav-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#9aa7b7}.nav-search input{height:32px;width:100%;border:1px solid #e5eaf1;background:#f8fafc;border-radius:8px;padding:0 12px 0 34px;font-size:12px;outline:none}.nav-right{display:flex;align-items:center;gap:8px}.btn-icon{width:32px;height:32px;border:1px solid #e5eaf1;border-radius:8px;background:#fff;color:#64748b;display:grid;place-items:center;cursor:pointer}.btn-login{height:32px;padding:0 14px;border:0;background:#fff;color:#172033;font-weight:800;font-size:12.2px;border-radius:8px;cursor:pointer}.btn-signup{height:32px;padding:0 15px;border:0;background:#2563eb;color:#fff;font-weight:800;font-size:12.2px;border-radius:8px;cursor:pointer}.hamburger{width:32px;height:32px;border:1px solid #e5eaf1;border-radius:8px;background:#fff;display:grid;place-items:center;color:#64748b}
+    .pg-hero{background:linear-gradient(120deg,rgba(9,20,41,.98),rgba(13,37,74,.94)),url('https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&w=1800&q=80') center/cover;padding:74px 24px 80px;text-align:center;color:#fff}.hero-badge{display:inline-flex;background:rgba(37,99,235,.24);color:#59a7ff;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:800;margin-bottom:18px}.pg-hero h1{font-size:46px;line-height:1.08;font-weight:900;letter-spacing:-.8px;margin-bottom:14px}.pg-hero p{font-size:14px;color:#c9d3e5;letter-spacing:.8px}.pg-search{max-width:1020px;margin:34px auto 0;background:#fff;border-radius:16px;padding:20px 22px;display:grid;grid-template-columns:1.35fr 1.05fr 1.2fr 1.1fr;gap:10px;align-items:center;box-shadow:0 18px 50px rgba(0,0,0,.23);text-align:left}.pg-search input,.pg-search select{height:40px;border:1.5px solid #dce3ee;border-radius:8px;background:#fff;padding:0 13px;color:#66758a;font-size:12.5px;outline:none}.radio-box{height:40px;border:1.5px solid #dce3ee;border-radius:8px;background:#fff;display:flex;align-items:center;gap:14px;padding:0 14px;color:#334155;font-size:12.5px;font-weight:700}.radio-box label{display:flex;gap:6px;align-items:center}.radio-box input{width:14px;height:14px;accent-color:#2563eb}.find-btn{height:40px;width:148px;background:#2563eb;color:#fff;border:0;border-radius:8px;font-weight:900;font-size:13px;cursor:pointer;box-shadow:0 8px 18px rgba(37,99,235,.28)}
+    .section{padding:64px 54px}.section.white{background:#fff}.section.gray{background:#f6f8fb}.title{text-align:center;font-size:28px;font-weight:900;letter-spacing:-.3px;color:#111827}.sub{text-align:center;color:#64748b;font-size:13px;margin-top:9px}.area-grid{max-width:1420px;margin:34px auto 0;display:grid;grid-template-columns:repeat(6,1fr);gap:18px}.area-card{height:130px;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(15,23,42,.04);transition:.15s;cursor:pointer}.area-card:hover{transform:translateY(-2px);border-color:#93c5fd}.area-icon{font-size:22px;margin-bottom:14px}.area-card h3{font-size:13.2px;font-weight:900;color:#111827;margin-bottom:7px}.area-card p{font-size:11.5px;color:#64748b}.area-card b{font-size:11.5px;color:#2563eb;margin-top:9px}
+    .listings-wrap{max-width:1430px;margin:0 auto}.listings-head{margin-bottom:26px}.listings-head h2{font-size:24px;font-weight:900;margin-bottom:9px}.listings-head p{color:#7a869a;font-size:12.5px}.pg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px 28px}.pg-card{background:#fff;border:1px solid #e6edf6;border-radius:14px;overflow:hidden;box-shadow:0 8px 20px rgba(15,23,42,.07)}.img{height:230px;position:relative;background:#e5e7eb;overflow:hidden}.img img{width:100%;height:100%;object-fit:cover;display:block}.badge{position:absolute;top:12px;font-size:10.5px;font-weight:900;padding:4px 9px;border-radius:6px}.badge.pg{left:12px;background:#2b77ff;color:white}.badge.avail{right:44px;background:#d9fbe7;color:#16a34a}.heart{position:absolute;right:12px;top:10px;width:30px;height:30px;border-radius:50%;border:0;background:#fff;display:grid;place-items:center;box-shadow:0 2px 10px rgba(0,0,0,.13);cursor:pointer}.heart svg{width:15px;height:15px;color:#9ca3af}.heart.liked svg{fill:#ef4444;color:#ef4444}.dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px}.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.7)}.pg-body{padding:15px 18px 17px}.title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.pg-title{font-size:15px;font-weight:900;color:#111827;margin-bottom:6px}.rating{font-size:11.5px;color:#64748b;white-space:nowrap}.rating .star{color:#f59e0b}.location{display:flex;align-items:center;gap:5px;color:#66819e;font-size:11.7px;margin-bottom:10px}.location svg{width:12px;height:12px}.mini-tags,.amenities{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tag{display:inline-flex;align-items:center;gap:3px;border-radius:5px;background:#f1f5f9;color:#64748b;font-size:10.8px;padding:4px 7px;font-weight:700}.tag.blue{background:#eaf2ff;color:#2563eb}.tag.green{background:#eafaf0;color:#16a34a}.tag.orange{background:#fff4e5;color:#e76000}.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:13px}.price{font-size:20px;font-weight:900;color:#2563eb}.price span{font-size:11px;color:#64748b;font-weight:600}.actions{display:flex;gap:8px}.view-btn,.book-btn{height:30px;padding:0 12px;border-radius:7px;font-size:11.3px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px}.view-btn{border:1px solid #e5e7eb;background:white;color:#111827}.book-btn{border:0;background:#2563eb;color:white}.view-btn svg,.book-btn svg{width:12px;height:12px}.compare{display:inline-block;margin-top:16px;color:#64748b;font-size:11.5px;cursor:pointer}
+    .prefs-card{max-width:1420px;margin:34px auto 0;background:#fff;border:1.5px solid #e2e8f0;border-radius:14px;padding:28px 34px;box-shadow:0 4px 14px rgba(15,23,42,.03)}.prefs-grid{display:grid;grid-template-columns:1.1fr 1.1fr 1.1fr 1fr;gap:44px}.pref-title{font-size:12px;color:#0f172a;font-weight:900;letter-spacing:.4px;text-transform:uppercase;margin-bottom:16px}.option{height:34px;display:flex;align-items:center;gap:9px;color:#172033;font-size:12px;font-weight:700}.option input{width:17px;height:17px;accent-color:#2563eb}.pill-check{height:38px;border:1.5px solid #cdd9ef;border-radius:7px;padding:0 12px;margin-bottom:9px;color:#2563eb}.pill-check input{accent-color:#2563eb}.budget-select{height:39px;width:100%;border:1.5px solid #dce3ee;border-radius:8px;background:#fff;padding:0 12px;color:#64748b;outline:none}.distance{margin-top:22px}.faq-wrap{max-width:950px;margin:32px auto 0}.faq-item{background:#fff;border:1px solid #e9eef6;border-radius:10px;margin-bottom:12px;overflow:hidden}.faq-q{width:100%;height:54px;background:#fff;border:0;padding:0 22px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:900;color:#111827;text-align:left;cursor:pointer}.faq-q span{color:#2563eb}.faq-a{display:none;color:#64748b;font-size:13px;line-height:1.6;padding:0 22px 18px}.faq-item.open .faq-a{display:block}.faq-item.open .faq-q span{transform:rotate(180deg)}
+    footer{background:#0f172a;color:#94a3b8;padding:56px 46px 0}.footer-grid{display:grid;grid-template-columns:1.2fr 1fr 1.2fr 1.1fr;gap:54px;max-width:1480px;margin:auto;padding-bottom:68px}.footer-logo{display:flex;gap:10px;align-items:center;margin-bottom:14px}.footer-logo-icon{width:36px;height:36px;background:#2563eb;border-radius:8px;display:grid;place-items:center}.footer-logo-icon svg{width:19px;height:19px;fill:white}.footer-logo-text{font-size:15px;color:white;font-weight:900}.footer-logo-text span{color:#38a4ff}.footer-desc{font-size:12.5px;line-height:1.8;max-width:190px}.social-links{display:flex;gap:8px;margin-top:18px}.social-btn{width:32px;height:32px;background:#172238;border-radius:7px;display:grid;place-items:center;color:#94a3b8}.social-btn svg{width:14px;height:14px}.footer-col h4{color:white;font-size:11px;text-transform:uppercase;letter-spacing:1.1px;margin-bottom:18px}.footer-links{list-style:none}.footer-links li{margin-bottom:11px}.footer-links a{color:#94a3b8;font-size:12px}.footer-links a:hover{color:#60a5fa}.footer-contact{list-style:none}.footer-contact li{display:flex;gap:10px;margin-bottom:12px;font-size:12px;line-height:1.55}.footer-contact svg{width:14px;height:14px;color:#38a4ff;flex-shrink:0}.watch-btn{margin-top:12px;display:inline-flex;align-items:center;gap:8px;border-radius:7px;background:rgba(239,68,68,.12);color:#f87171;padding:8px 18px;font-weight:900;font-size:12px}.watch-btn svg{width:13px;height:13px;fill:#ef4444}.newsletter-text{font-size:12px;line-height:1.7;margin-bottom:13px}.newsletter-input{width:100%;height:40px;border:1px solid #25314a;background:#1e293b;color:#fff;border-radius:7px;padding:0 13px;margin-bottom:10px;font-size:12px}.subscribe{height:40px;width:100%;border:0;border-radius:7px;background:#2f9cf4;color:white;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.subscribe svg{width:14px;height:14px}.footer-bottom{border-top:1px solid #1e293b;max-width:1480px;margin:auto;display:flex;justify-content:space-between;padding:20px 0;color:#64748b;font-size:11.5px}.footer-bottom-right{display:flex;gap:18px}.footer-bottom-right a{color:#64748b}
+    .modal.booking-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:10000;align-items:center;justify-content:center;padding:24px}.modal.booking-modal.open{display:flex}.booking-card{width:min(448px,calc(100vw - 32px));background:#fff;border-radius:20px;padding:34px 32px 32px;box-shadow:0 30px 90px rgba(0,0,0,.38);position:relative}.booking-close{position:absolute;right:32px;top:30px;width:34px;height:34px;border:1px solid #dfe6f0;border-radius:8px;background:#fff;color:#64748b;font-size:26px;line-height:1;display:grid;place-items:center;cursor:pointer}.booking-title{font-size:22px!important;line-height:1.2;font-weight:900!important;color:#111827!important;margin:0 46px 8px 0!important}.booking-subtitle{font-size:14px!important;color:#64748b!important;margin:0 0 26px 0!important}.booking-field{margin-bottom:18px}.booking-label{display:flex!important;align-items:center!important;gap:10px!important;margin:0 0 8px 0!important;font-size:14px!important;font-weight:850!important;color:#1f2937!important}.booking-label svg{width:15px;height:15px;color:#2563eb;flex-shrink:0}.booking-input{width:100%!important;height:45px!important;border:1.5px solid #e1e7ef!important;background:#f8fafc!important;border-radius:9px!important;padding:0 14px!important;outline:none!important;color:#111827!important;font-size:14px!important}.booking-input::placeholder{color:#9aa4b2}.booking-input:focus{border-color:#2563eb!important;background:#fff!important;box-shadow:0 0 0 3px rgba(37,99,235,.08)}.booking-confirm{width:100%!important;height:48px!important;border:0!important;border-radius:9px!important;background:#2f6fed!important;color:#fff!important;font-size:16px!important;font-weight:900!important;margin-top:4px!important;cursor:pointer!important;box-shadow:0 10px 24px rgba(47,111,237,.28)}.booking-confirm:hover{background:#245fd8!important}@media(max-width:520px){.booking-card{padding:30px 24px}.booking-close{right:24px;top:24px}.booking-title{font-size:20px!important}}
+    @media(max-width:1100px){.pg-search{grid-template-columns:1fr 1fr}.area-grid{grid-template-columns:repeat(3,1fr)}.pg-grid{grid-template-columns:repeat(2,1fr)}.prefs-grid,.footer-grid{grid-template-columns:repeat(2,1fr)}.nav-search{display:none}}@media(max-width:720px){.navbar{padding:0 14px;gap:10px}.nav-links{display:none}.pg-hero h1{font-size:32px}.pg-search,.pg-grid,.prefs-grid,.footer-grid{grid-template-columns:1fr}.area-grid{grid-template-columns:repeat(2,1fr)}.section{padding:44px 18px}.footer-bottom{flex-direction:column;gap:12px}.img{height:190px}}
+  </style>
+
+  <nav class="navbar">
+    <a href="#home" class="logo"><div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="logo-text">Nest<span>Bangalore</span></span></a>
+    <div class="nav-links"><a href="#home">Home</a><a href="#explore-rentals">Explore Rentals</a><a href="#pgfinder" class="active">PG Finder</a><a href="#contact">Contact</a></div>
+    <div class="nav-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search area, locality..."></div>
+    <div class="nav-right"><button class="btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button><button class="btn-login">Login</button><button class="btn-signup">Sign Up</button><button class="btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></button><button class="hamburger">☰</button></div>
+  </nav>
+
+  <section class="pg-hero">
+    <div class="hero-badge">🏠 Find PGs Across Bangalore</div>
+    <h1>Find the Perfect PG in Bangalore</h1>
+    <p>Search verified PG accommodations with food, WiFi & all amenities included</p>
+    <div class="pg-search">
+      <input placeholder="🔍  Search PG name or area">
+      <select><option>📍 Location</option><option>Whitefield</option><option>Koramangala</option><option>Indiranagar</option><option>HSR Layout</option><option>Electronic City</option><option>Bellandur</option></select>
+      <div class="radio-box"><label><input type="radio" name="pg-gender"> Male</label><label><input type="radio" name="pg-gender"> Female</label><label><input checked type="radio" name="pg-gender"> Any</label></div>
+      <select><option>Budget</option><option>₹5k - ₹8k</option><option>₹8k - ₹15k</option><option>₹15k+</option></select>
+      <button class="find-btn">🔍 Find PG</button>
+    </div>
+  </section>
+
+  <section class="section white">
+    <h2 class="title">Top PG Areas in Bangalore</h2><p class="sub">Choose your neighbourhood — verified PGs in every area</p>
+    <div class="area-grid">
+      <div class="area-card"><div class="area-icon">🏢</div><h3>Whitefield</h3><p>IT hub — close to tech parks</p><b>342 PGs</b></div><div class="area-card"><div class="area-icon">🌃</div><h3>Koramangala</h3><p>Startup belt, vibrant nightlife</p><b>289 PGs</b></div><div class="area-card"><div class="area-icon">🌳</div><h3>Indiranagar</h3><p>Green, posh, metro connected</p><b>215 PGs</b></div><div class="area-card"><div class="area-icon">🏍️</div><h3>HSR Layout</h3><p>Affordable, family-friendly</p><b>198 PGs</b></div><div class="area-card"><div class="area-icon">📍</div><h3>Electronic City</h3><p>Infosys, Wipro campuses nearby</p><b>412 PGs</b></div><div class="area-card"><div class="area-icon">🌇</div><h3>Bellandur</h3><p>ORR access, serene lakes</p><b>176 PGs</b></div>
+    </div>
+  </section>
+
+  <section class="section gray">
+    <div class="listings-wrap"><div class="listings-head"><h2>All PG Listings</h2><p>5 PGs available</p></div>
+      <div class="pg-grid">
+        <article class="pg-card"><div class="img"><img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80" alt="Sunshine Boys PG"><span class="badge pg">PG</span><span class="badge avail">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div><div class="pg-body"><div class="title-row"><h3 class="pg-title">Sunshine Boys PG</h3><div class="rating"><span class="star">★</span> <b>4.7</b>(112)</div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Koramangala 1st Block</div><div class="mini-tags"><span class="tag blue">Double Sharing</span><span class="tag green">Food Included</span><span class="tag orange">🚇 600m from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">AC</span><span class="tag">Food</span><span class="tag">Laundry</span><span class="tag">TV</span></div><div class="card-foot"><div class="price">₹8,500<span>/mo</span></div><div class="actions"><button class="view-btn">👁 View</button><button class="book-btn" onclick="bookVisit('Sunshine Boys PG')">▣ Book Visit</button></div></div></div></article>
+        <article class="pg-card"><div class="img"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=900&q=80" alt="Comfort Girls Hostel"><span class="badge pg">PG</span><span class="badge avail">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div><div class="pg-body"><div class="title-row"><h3 class="pg-title">Comfort Girls Hostel</h3><div class="rating"><span class="star">★</span> <b>4.8</b>(88)</div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Indiranagar, 80ft Road</div><div class="mini-tags"><span class="tag blue">Single Sharing</span><span class="tag green">Food Included</span><span class="tag orange">🚇 300m from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">AC</span><span class="tag">Food</span><span class="tag">Hot Water</span><span class="tag">CCTV</span></div><div class="card-foot"><div class="price">₹9,200<span>/mo</span></div><div class="actions"><button class="view-btn">👁 View</button><button class="book-btn" onclick="bookVisit('Comfort Girls Hostel')">▣ Book Visit</button></div></div></div></article>
+        <article class="pg-card"><div class="img"><img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80" alt="Tech Park PG"><span class="badge pg">PG</span><span class="badge avail">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div><div class="pg-body"><div class="title-row"><h3 class="pg-title">Tech Park PG - EC</h3><div class="rating"><span class="star">★</span> <b>4.4</b>(201)</div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Electronic City Phase 2</div><div class="mini-tags"><span class="tag blue">Triple Sharing</span><span class="tag green">Food Included</span><span class="tag orange">🚇 2.5km from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">Food</span><span class="tag">Parking</span><span class="tag">Water</span><span class="tag">Generator</span></div><div class="card-foot"><div class="price">₹6,800<span>/mo</span></div><div class="actions"><button class="view-btn">👁 View</button><button class="book-btn" onclick="bookVisit('Tech Park PG - EC')">▣ Book Visit</button></div></div></div></article>
+        <article class="pg-card"><div class="img"><img src="https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&w=900&q=80" alt="HSR Cozy Stay"><span class="badge pg">PG</span><span class="badge avail">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div><div class="pg-body"><div class="title-row"><h3 class="pg-title">HSR Cozy Stay</h3><div class="rating"><span class="star">★</span> <b>4.3</b>(55)</div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>HSR Layout Sector 6</div><div class="mini-tags"><span class="tag blue">Double Sharing</span><span class="tag green">Food Included</span><span class="tag orange">🚇 800m from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">Food</span><span class="tag">Hot Water</span><span class="tag">CCTV</span><span class="tag">Parking</span></div><div class="card-foot"><div class="price">₹7,500<span>/mo</span></div><div class="actions"><button class="view-btn">👁 View</button><button class="book-btn" onclick="bookVisit('HSR Cozy Stay')">▣ Book Visit</button></div></div></div></article>
+        <article class="pg-card"><div class="img"><img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=900&q=80" alt="Green Valley PG"><span class="badge pg">PG</span><span class="badge avail">Available</span><button class="heart" onclick="toggleHeart(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button></div><div class="pg-body"><div class="title-row"><h3 class="pg-title">Green Valley PG</h3><div class="rating"><span class="star">★</span> <b>4.5</b>(42)</div></div><div class="location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Bellandur, Sarjapur Road</div><div class="mini-tags"><span class="tag blue">Double Sharing</span><span class="tag orange">🚇 1.5km from metro</span></div><div class="amenities"><span class="tag">WiFi</span><span class="tag">AC</span><span class="tag">Laundry</span><span class="tag">TV</span><span class="tag">Parking</span></div><div class="card-foot"><div class="price">₹8,000<span>/mo</span></div><div class="actions"><button class="view-btn">👁 View</button><button class="book-btn" onclick="bookVisit('Green Valley PG')">▣ Book Visit</button></div></div></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section white"><h2 class="title">Room Preferences</h2><p class="sub">Customize your ideal PG experience</p><div class="prefs-card"><div class="prefs-grid"><div><div class="pref-title">Room Type</div><label class="option pill-check"><input checked type="checkbox"> Single Sharing</label><label class="option pill-check"><input checked type="checkbox"> Double Sharing</label><label class="option pill-check"><input checked type="checkbox"> Triple Sharing</label><label class="option pill-check"><input type="checkbox"> 4+ Sharing</label></div><div><div class="pref-title">Must Have</div><label class="option"><input type="checkbox"> Food Included</label><label class="option"><input type="checkbox"> AC Room</label><label class="option"><input checked type="checkbox"> Available Now</label></div><div><div class="pref-title">Gender Preference</div><label class="option"><input name="gp" type="radio"> Boys PG</label><label class="option"><input name="gp" type="radio"> Girls PG</label><label class="option"><input name="gp" type="radio"> Co-ed PG</label></div><div><div class="pref-title">Monthly Budget</div><select class="budget-select"><option>₹5,000 - ₹15,000</option><option>₹15,000 - ₹25,000</option></select><div class="pref-title distance">Distance From Metro</div><label class="option"><input name="metro" type="radio"> Under 500m</label><label class="option"><input name="metro" type="radio"> 500m - 1km</label><label class="option"><input name="metro" type="radio"> 1km - 2km</label><label class="option"><input name="metro" type="radio"> 2km+</label></div></div></div></section>
+
+  <section class="section gray"><h2 class="title">Frequently Asked Questions</h2><p class="sub">Everything you need to know about renting a PG in Bangalore</p><div class="faq-wrap"><div class="faq-item"><button class="faq-q">What documents are needed to book a PG? <span>⌄</span></button><div class="faq-a">Usually Aadhaar/PAN, office or college ID, one photo, and basic contact details are enough.</div></div><div class="faq-item"><button class="faq-q">Is food included in the rent? <span>⌄</span></button><div class="faq-a">Many listings include food. Check the green Food Included tag on each PG card.</div></div><div class="faq-item"><button class="faq-q">Can I book a PG without visiting? <span>⌄</span></button><div class="faq-a">Yes, you can shortlist online and book a visit or request virtual confirmation.</div></div><div class="faq-item"><button class="faq-q">What is the typical lock-in period? <span>⌄</span></button><div class="faq-a">Most PGs have a 1 to 3 month lock-in, depending on the property owner.</div></div><div class="faq-item"><button class="faq-q">Are utilities included in the PG rent? <span>⌄</span></button><div class="faq-a">Basic utilities are often included, but electricity may be charged separately.</div></div><div class="faq-item"><button class="faq-q">How do I get my security deposit back? <span>⌄</span></button><div class="faq-a">After checkout and room inspection, the refundable amount is transferred as per the property terms.</div></div></div></section>
+
+  <footer id="contact"><div class="footer-grid"><div><a href="#home" class="footer-logo"><div class="footer-logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="footer-logo-text">Nest<span>Bangalore</span></span></a><p class="footer-desc">Bangalore's most trusted platform for PG, co-living & flat rentals. Verified listings, zero brokerage, instant booking.</p><div class="social-links"><a class="social-btn">𝕏</a><a class="social-btn">◎</a><a class="social-btn">in</a><a class="social-btn">f</a><a class="social-btn">▶</a></div></div><div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="#home">Home</a></li><li><a href="#explore-rentals">Explore Rentals</a></li><li><a href="#pgfinder">PG Finder</a></li><li><a href="#contact">Contact Us</a></li></ul></div><div class="footer-col"><h4>Contact</h4><ul class="footer-contact"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Koramangala, Bangalore — 560034</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>+91 98765 43210</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>hello@nestbangalore.in</span></li></ul><a href="#home" class="watch-btn">▶ Watch How It Works</a></div><div class="footer-col"><h4>Newsletter</h4><p class="newsletter-text">Get the latest PG & flat listings delivered to your inbox.</p><input class="newsletter-input" type="email" placeholder="Your email address"><button class="subscribe">✈ Subscribe</button></div></div><div class="footer-bottom"><div>© 2026 NestBangalore. All rights reserved.</div><div class="footer-bottom-right"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div></div></footer>
+  <div id="modal" class="modal booking-modal" aria-hidden="true">
+  <div class="booking-card" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+    <button class="booking-close close" onclick="closeModal()" aria-label="Close">×</button>
+    <h3 id="bookingTitle" class="booking-title">Book a Visit</h3>
+    <p id="modalProperty" class="booking-subtitle">Modern Co-living – Whitefield</p>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+        Full Name
+      </label>
+      <input class="booking-input" type="text" placeholder="Enter your full name">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Phone Number
+      </label>
+      <input class="booking-input" type="tel" placeholder="+91 XXXXX XXXXX">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Preferred Date
+      </label>
+      <input class="booking-input" type="date">
+    </div>
+
+    <div class="booking-field">
+      <label class="booking-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Preferred Time
+      </label>
+      <input class="booking-input" type="time">
+    </div>
+
+    <button class="booking-confirm confirm" onclick="confirmVisit()">Confirm Booking</button>
+  </div>
+</div>
+</template>
+
+
+<template id="contact-template">
+  <style>
+    :host{display:block;font-family:'Inter',sans-serif;color:#111827;background:#f5f7fb;min-height:100vh} *{box-sizing:border-box;margin:0;padding:0} a{text-decoration:none;color:inherit} button,input,select,textarea{font-family:'Inter',sans-serif}
+    .navbar{position:sticky;top:0;z-index:100;height:54px;background:rgba(255,255,255,.98);border-bottom:1px solid #e8edf4;display:flex;align-items:center;padding:0 36px;gap:26px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+    .logo{display:flex;align-items:center;gap:8px;flex-shrink:0}.logo-icon{width:30px;height:30px;border-radius:8px;background:#2f80ed;display:grid;place-items:center}.logo-icon svg{width:17px;height:17px;fill:#fff}.logo-text{font-weight:800;font-size:15px;color:#15213b}.logo-text span{color:#2489e8}.nav-links{display:flex;align-items:center;gap:5px}.nav-links a{font-size:12.3px;color:#506174;padding:7px 11px;border-radius:7px;font-weight:600}.nav-links a:hover,.nav-links a.active{background:#edf5ff;color:#2563eb}.nav-search{margin-left:auto;width:260px;position:relative}.nav-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#9aa7b7}.nav-search input{height:32px;width:100%;border:1px solid #e5eaf1;background:#f8fafc;border-radius:8px;padding:0 12px 0 34px;font-size:12px;outline:none}.nav-right{display:flex;align-items:center;gap:8px}.btn-icon{width:32px;height:32px;border:1px solid #e5eaf1;border-radius:8px;background:#fff;color:#64748b;display:grid;place-items:center;cursor:pointer}.btn-login{height:32px;padding:0 14px;border:0;background:#fff;color:#172033;font-weight:800;font-size:12.2px;border-radius:8px;cursor:pointer}.btn-signup{height:32px;padding:0 15px;border:0;background:#2563eb;color:#fff;font-weight:800;font-size:12.2px;border-radius:8px;cursor:pointer}.hamburger{width:32px;height:32px;border:1px solid #e5eaf1;border-radius:8px;background:#fff;display:grid;place-items:center;color:#64748b}
+    .contact-hero{min-height:440px;background:linear-gradient(135deg,#2359d9 0%,#2765e6 48%,#09a7df 100%);display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:72px 20px 84px;position:relative;overflow:hidden}.contact-hero:before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 22% 16%,rgba(255,255,255,.14),transparent 31%),radial-gradient(circle at 86% 84%,rgba(255,255,255,.11),transparent 34%)}.hero-content{position:relative;z-index:1;max-width:720px}.mail-icon{width:68px;height:68px;border-radius:17px;background:rgba(255,255,255,.15);display:grid;place-items:center;margin:0 auto 24px}.mail-icon svg{width:28px;height:28px}.contact-hero h1{font-size:44px;line-height:1.16;font-weight:900;letter-spacing:-.8px;margin-bottom:20px}.contact-hero p{font-size:14.2px;line-height:1.8;color:rgba(255,255,255,.83);max-width:610px;margin:0 auto 24px}.hero-contact-row{display:flex;justify-content:center;gap:28px;align-items:center;flex-wrap:wrap;color:rgba(255,255,255,.92);font-size:12.5px}.hero-contact-row span{display:inline-flex;align-items:center;gap:6px}.hero-contact-row svg{width:14px;height:14px}
+    .contact-main{padding:64px 64px 34px;background:#f5f7fb}.contact-layout{max-width:1260px;margin:0 auto;display:grid;grid-template-columns:minmax(0,2.1fr) minmax(300px,.9fr);gap:32px;align-items:start}.card{background:#fff;border:1px solid #e6ebf2;border-radius:16px;box-shadow:0 10px 28px rgba(15,23,42,.07)}.message-card{padding:34px 38px}.message-card h2{font-size:22px;font-weight:900;color:#111827;margin-bottom:8px}.message-card .helper{font-size:13px;color:#6b7280;margin-bottom:28px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{display:flex;flex-direction:column;gap:8px}.field label,.priority-label{font-size:12.5px;font-weight:800;color:#111827}.field input,.field select,.field textarea{border:1.5px solid #e1e7ef;background:#f8fafc;border-radius:8px;padding:0 14px;outline:none;color:#27364c;font-size:13px}.field input,.field select{height:44px}.field textarea{height:136px;padding-top:13px;resize:none}.field.full{grid-column:1/-1}.priority{grid-column:1/-1}.priority-row{display:flex;gap:22px;margin-top:11px}.radio{display:flex;align-items:center;gap:8px;color:#334155;font-size:13px}.radio input,.agree input{accent-color:#2563eb}.agree{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#64748b;margin:20px 0}.agree a{color:#2563eb}.send-btn{width:100%;height:48px;border:0;border-radius:9px;background:#2563eb;color:#fff;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;box-shadow:0 8px 22px rgba(37,99,235,.22)}.send-btn:hover{background:#1d4ed8}.side-stack{display:grid;gap:18px}.side-card{padding:22px}.side-card h3{font-size:14.5px;font-weight:900;margin-bottom:14px}.quick-item{display:flex;align-items:center;gap:13px;background:#f8fafc;border:1px solid #e8edf5;border-radius:9px;min-height:61px;padding:12px 14px;margin-bottom:12px}.quick-icon{width:32px;height:32px;border-radius:8px;background:#eef5ff;color:#2563eb;display:grid;place-items:center;flex-shrink:0}.quick-icon.green{background:#ecfdf5;color:#10b981}.quick-item small{display:block;font-size:11px;color:#94a3b8;margin-bottom:3px}.quick-item b{font-size:12.5px;color:#111827}.tutorial{background:#f1f6ff;border-color:#dce9ff}.tutorial h3{color:#0f172a}.tutorial p{font-size:12.3px;line-height:1.55;color:#5f6f85;margin-bottom:13px}.youtube-btn{height:36px;width:100%;border:0;border-radius:7px;background:#ef4444;color:white;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.office-hours p{display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:11px}.office-hours b{font-size:12px;color:#111827}.office-hours .closed{color:#ef4444}
+    .offices-section{padding:44px 64px 70px;background:#f5f7fb}.section-title{text-align:center;font-size:26px;font-weight:900;letter-spacing:-.25px;margin-bottom:9px}.section-sub{text-align:center;font-size:13px;color:#64748b;margin-bottom:32px}.office-grid{max-width:1260px;margin:0 auto 56px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}.office-card{background:#fff;border:1px solid #e6ebf2;border-radius:14px;padding:28px 30px;box-shadow:0 6px 16px rgba(15,23,42,.04)}.office-top{display:flex;align-items:center;gap:16px;margin-bottom:20px}.office-emoji{width:44px;height:44px;border-radius:10px;background:#eef5ff;display:grid;place-items:center;font-size:20px}.office-card h3{font-size:15px;font-weight:900}.office-line{display:flex;gap:9px;align-items:flex-start;color:#65758c;font-size:12.2px;line-height:1.5;margin-bottom:10px}.office-line svg{width:13px;height:13px;color:#2563eb;flex-shrink:0;margin-top:2px}.directions-btn{height:38px;margin-top:14px;width:100%;border:0;border-radius:8px;background:#2563eb;color:#fff;font-size:12.5px;font-weight:900;cursor:pointer}.map-wrap{max-width:1260px;margin:0 auto}.map-wrap h2{font-size:20px;font-weight:900;margin-bottom:22px}.fake-map{height:350px;border-radius:14px;border:1px solid #dce8f7;overflow:hidden;position:relative;background-color:#eaf4ff;background-image:linear-gradient(#d4e6fb 1px,transparent 1px),linear-gradient(90deg,#d4e6fb 1px,transparent 1px);background-size:95px 95px}.map-pin{position:absolute;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10.5px;font-weight:900;color:#2563eb}.map-pin i{width:8px;height:8px;border-radius:50%;background:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,.13)}.pin-k{left:28%;top:33%}.pin-w{left:61%;top:26%}.pin-h{left:24%;top:58%}.map-label{background:#2563eb;color:#fff;padding:5px 8px;border-radius:5px}.map-popup{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:280px;height:122px;background:#fff;border-radius:12px;box-shadow:0 14px 36px rgba(15,23,42,.14);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.map-popup svg{width:24px;height:24px;color:#2563eb;margin-bottom:12px}.map-popup b{font-size:14px;margin-bottom:5px}.map-popup span{font-size:11.7px;color:#64748b}
+    footer{background:#0f172a;color:#94a3b8;padding:56px 46px 0}.footer-grid{display:grid;grid-template-columns:1.2fr 1fr 1.2fr 1.1fr;gap:54px;max-width:1480px;margin:auto;padding-bottom:68px}.footer-logo{display:flex;gap:10px;align-items:center;margin-bottom:14px}.footer-logo-icon{width:36px;height:36px;background:#2563eb;border-radius:8px;display:grid;place-items:center}.footer-logo-icon svg{width:19px;height:19px;fill:white}.footer-logo-text{font-size:15px;color:white;font-weight:900}.footer-logo-text span{color:#38a4ff}.footer-desc{font-size:12.5px;line-height:1.8;max-width:190px}.social-links{display:flex;gap:8px;margin-top:18px}.social-btn{width:32px;height:32px;background:#172238;border-radius:7px;display:grid;place-items:center;color:#94a3b8}.footer-col h4{color:white;font-size:11px;text-transform:uppercase;letter-spacing:1.1px;margin-bottom:18px}.footer-links{list-style:none}.footer-links li{margin-bottom:11px}.footer-links a{color:#94a3b8;font-size:12px}.footer-links a:hover{color:#60a5fa}.footer-contact{list-style:none}.footer-contact li{display:flex;gap:10px;margin-bottom:12px;font-size:12px;line-height:1.55}.footer-contact svg{width:14px;height:14px;color:#38a4ff;flex-shrink:0}.watch-btn{margin-top:12px;display:inline-flex;align-items:center;gap:8px;border-radius:7px;background:rgba(239,68,68,.12);color:#f87171;padding:8px 18px;font-weight:900;font-size:12px}.newsletter-text{font-size:12px;line-height:1.7;margin-bottom:13px}.newsletter-input{width:100%;height:40px;border:1px solid #25314a;background:#1e293b;color:#fff;border-radius:7px;padding:0 13px;margin-bottom:10px;font-size:12px}.subscribe{height:40px;width:100%;border:0;border-radius:7px;background:#2f9cf4;color:white;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}.footer-bottom{border-top:1px solid #1e293b;max-width:1480px;margin:auto;display:flex;justify-content:space-between;padding:20px 0;color:#64748b;font-size:11.5px}.footer-bottom-right{display:flex;gap:18px}.footer-bottom-right a{color:#64748b}
+    @media(max-width:1050px){.contact-layout,.office-grid,.footer-grid{grid-template-columns:1fr 1fr}.nav-search{display:none}.contact-hero h1{font-size:36px}.office-card:last-child{grid-column:1/-1}}@media(max-width:720px){.navbar{padding:0 14px;gap:10px}.nav-links{display:none}.contact-main,.offices-section{padding:42px 18px}.contact-layout,.office-grid,.footer-grid,.form-grid{grid-template-columns:1fr}.field.full,.priority{grid-column:auto}.contact-hero{min-height:360px}.contact-hero h1{font-size:30px}.office-card:last-child{grid-column:auto}.footer-bottom{flex-direction:column;gap:12px}.fake-map{height:260px}.map-popup{width:220px}}
+  </style>
+
+  <nav class="navbar">
+    <a href="#home" class="logo"><div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="logo-text">Nest<span>Bangalore</span></span></a>
+    <div class="nav-links"><a href="#home">Home</a><a href="#explore-rentals">Explore Rentals</a><a href="#pgfinder">PG Finder</a><a href="#contact" class="active">Contact</a></div>
+    <div class="nav-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search area, locality..."></div>
+    <div class="nav-right"><button class="btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button><button class="btn-login">Login</button><button class="btn-signup">Sign Up</button><button class="btn-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></button><button class="hamburger">☰</button></div>
+  </nav>
+
+  <section class="contact-hero">
+    <div class="hero-content">
+      <div class="mail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <h1>Get in Touch with<br>NestBangalore</h1>
+      <p>Have a question, feedback, or need support? Our team is here 6 days a week. Average response time: under 2 hours.</p>
+      <div class="hero-contact-row"><span>📞 +91 98765 43210</span><span>✉️ hello@nestbangalore.in</span><span>🕘 Mon–Sat, 9AM–8PM</span></div>
+    </div>
+  </section>
+
+  <main class="contact-main">
+    <div class="contact-layout">
+      <section class="card message-card">
+        <h2>Send Us a Message</h2>
+        <p class="helper">Fill out the form below and we'll get back to you shortly.</p>
+        <div class="form-grid">
+          <div class="field"><label>Full Name *</label><input type="text" placeholder="Your full name"></div>
+          <div class="field"><label>Email Address *</label><input type="email" placeholder="you@email.com"></div>
+          <div class="field"><label>Phone Number</label><input type="tel" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="field"><label>Issue Type *</label><select><option></option><option>Booking Support</option><option>Listing Query</option><option>Payment Issue</option><option>General Feedback</option></select></div>
+          <div class="priority"><div class="priority-label">Priority Level</div><div class="priority-row"><label class="radio"><input type="radio" name="priority"> Low</label><label class="radio"><input type="radio" name="priority" checked> Medium</label><label class="radio"><input type="radio" name="priority"> High</label></div></div>
+          <div class="field full"><label>Message *</label><textarea placeholder="Describe your issue or query in detail..."></textarea></div>
+        </div>
+        <label class="agree"><input type="checkbox" checked> I agree to the <a href="#">Privacy Policy</a> and consent to NestBangalore contacting me about my query.</label>
+        <button class="send-btn">✈ Send Message</button>
+      </section>
+
+      <aside class="side-stack">
+        <div class="card side-card"><h3>Quick Contact</h3><div class="quick-item"><div class="quick-icon">📞</div><div><small>Call Us</small><b>+91 98765 43210</b></div></div><div class="quick-item"><div class="quick-icon">✉️</div><div><small>Email Us</small><b>hello@nestbangalore.in</b></div></div><div class="quick-item whatsapp"><div class="quick-icon green">💬</div><div><small>WhatsApp</small><b>Chat on WhatsApp</b></div></div></div>
+        <div class="card side-card tutorial"><h3>🎥 Watch Tutorial Videos</h3><p>Learn how to find and book PGs quickly with our step-by-step guides.</p><button class="youtube-btn">▶ Watch on YouTube ›</button></div>
+        <div class="card side-card office-hours"><h3>Office Hours</h3><p><span>Monday – Friday</span><b>9:00 AM – 8:00 PM</b></p><p><span>Saturday</span><b>10:00 AM – 6:00 PM</b></p><p><span>Sunday</span><b class="closed">Closed</b></p></div>
+      </aside>
+    </div>
+  </main>
+
+  <section class="offices-section">
+    <h2 class="section-title">Our Offices</h2><p class="section-sub">Visit us at any of our Bangalore locations</p>
+    <div class="office-grid">
+      <div class="office-card"><div class="office-top"><div class="office-emoji">🏢</div><h3>Koramangala Office</h3></div><div class="office-line">📍 <span>3rd Floor, 5th Block, Koramangala, Bangalore – 560095</span></div><div class="office-line">📞 <span>+91 98765 43210</span></div><div class="office-line">✉️ <span>koramangala@nestbangalore.in</span></div><div class="office-line">🕘 <span>Mon–Sat: 9AM – 7PM</span></div><button class="directions-btn">⌖ Get Directions</button></div>
+      <div class="office-card"><div class="office-top"><div class="office-emoji">🏙️</div><h3>Whitefield Office</h3></div><div class="office-line">📍 <span>ITPL Main Road, Whitefield, Bangalore – 560066</span></div><div class="office-line">📞 <span>+91 98765 43211</span></div><div class="office-line">✉️ <span>whitefield@nestbangalore.in</span></div><div class="office-line">🕘 <span>Mon–Sat: 10AM – 8PM</span></div><button class="directions-btn">⌖ Get Directions</button></div>
+      <div class="office-card"><div class="office-top"><div class="office-emoji">🏘️</div><h3>HSR Layout Office</h3></div><div class="office-line">📍 <span>Sector 2, 27th Main Road, HSR Layout, Bangalore – 560102</span></div><div class="office-line">📞 <span>+91 98765 43212</span></div><div class="office-line">✉️ <span>hsr@nestbangalore.in</span></div><div class="office-line">🕘 <span>Mon–Fri: 9AM – 6PM</span></div><button class="directions-btn">⌖ Get Directions</button></div>
+    </div>
+    <div class="map-wrap"><h2>Find Us on the Map</h2><div class="fake-map"><div class="map-pin pin-k"><span class="map-label">Koramangala</span><i></i></div><div class="map-pin pin-w"><span class="map-label">Whitefield</span><i></i></div><div class="map-pin pin-h"><span class="map-label">HSR Layout</span><i></i></div><div class="map-popup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><b>Interactive Map</b><span>NestBangalore offices across Bangalore</span></div></div></div>
+  </section>
+
+  <footer id="contact"><div class="footer-grid"><div><a href="#home" class="footer-logo"><div class="footer-logo-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="footer-logo-text">Nest<span>Bangalore</span></span></a><p class="footer-desc">Bangalore's most trusted platform for PG, co-living & flat rentals. Verified listings, zero brokerage, instant booking.</p><div class="social-links"><a class="social-btn">𝕏</a><a class="social-btn">◎</a><a class="social-btn">in</a><a class="social-btn">f</a><a class="social-btn">▶</a></div></div><div class="footer-col"><h4>Quick Links</h4><ul class="footer-links"><li><a href="#home">Home</a></li><li><a href="#explore-rentals">Explore Rentals</a></li><li><a href="#pgfinder">PG Finder</a></li><li><a href="#contact">Contact Us</a></li></ul></div><div class="footer-col"><h4>Contact</h4><ul class="footer-contact"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Koramangala, Bangalore — 560034</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>+91 98765 43210</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>hello@nestbangalore.in</span></li></ul><a href="#home" class="watch-btn">▶ Watch How It Works</a></div><div class="footer-col"><h4>Newsletter</h4><p class="newsletter-text">Get the latest PG & flat listings delivered to your inbox.</p><input class="newsletter-input" type="email" placeholder="Your email address"><button class="subscribe">✈ Subscribe</button></div></div><div class="footer-bottom"><div>© 2026 NestBangalore. All rights reserved.</div><div class="footer-bottom-right"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div></div></footer>
+</template>
+
+<script>
+(() => {
+  const YOUTUBE_URL = 'https://www.youtube.com/watch?v=EA4DipdhpV8';
+  const app = document.getElementById('app');
+  const root = app.attachShadow({ mode: 'open' });
+  let currentPage = '';
+
+  function templateFor(page) {
+    if (page === 'explore') return document.getElementById('explore-template');
+    if (page === 'pgfinder') return document.getElementById('pgfinder-template');
+    if (page === 'contact') return document.getElementById('contact-template');
+    return document.getElementById('home-template');
+  }
+
+  function routeFromHash() {
+    const hash = (window.location.hash || '').replace('#','');
+    if (hash === 'explore-rentals' || hash === 'rentals' || hash === 'explore-rentals-pg') return { page:'explore', anchor:null, pgOnly: hash === 'explore-rentals-pg' };
+    if (hash === 'pgfinder' || hash === 'pg-finder' || hash === 'find-pg') return { page:'pgfinder', anchor:null };
+    if (hash === 'contact' || hash === 'contact-us') return { page:'contact', anchor:null };
+    if (hash === 'home' || hash === '') return { page:'home', anchor:null };
+    return { page:'home', anchor:hash };
+  }
+
+  function render(page, anchor=null, options={}) {
+    currentPage = page;
+    const tpl = templateFor(page);
+    root.innerHTML = '';
+    root.appendChild(tpl.content.cloneNode(true));
+    if (page === 'home') initHome();
+    else if (page === 'explore') initExplore(options);
+    else if (page === 'pgfinder') initPgFinder();
+    else if (page === 'contact') initContact();
+    window.scrollTo(0,0);
+    if (anchor) setTimeout(() => scrollInRoot(anchor), 30);
+  }
+
+  function navigate(page, anchor=null, options={}) {
+    let newHash = '#home';
+    if (page === 'explore') newHash = options.pgOnly ? '#explore-rentals-pg' : '#explore-rentals';
+    else if (page === 'pgfinder') newHash = '#pgfinder';
+    else if (page === 'contact') newHash = '#contact';
+    else if (anchor) newHash = '#' + anchor;
+    if (window.location.hash !== newHash) {
+      history.pushState(null, '', newHash);
+    }
+    render(page, anchor, options);
+  }
+
+  function scrollInRoot(id) {
+    const el = root.getElementById(id) || root.querySelector('#' + CSS.escape(id));
+    if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function closestActionLink(target) {
+    return target && target.closest ? target.closest('a') : null;
+  }
+
+
+  function isYoutubeTrigger(el) {
+    if (!el) return false;
+    const href = (el.getAttribute && (el.getAttribute('href') || '')) || '';
+    const text = (el.textContent || '').trim().toLowerCase();
+    return href.includes('youtube.com') || href.includes('youtu.be') || text.includes('youtube') || text.includes('watch') || text === '▶';
+  }
+
+  function openYoutube(e) {
+    if (e) e.preventDefault();
+    window.location.href = YOUTUBE_URL;
+  }
+
+  function setupYoutubeLinks() {
+    root.querySelectorAll('.btn-demo, .btn-watch-how, .watch-btn, .youtube-btn, .social-btn.active, a[href*="youtube"], a[href*="youtu.be"]').forEach(el => {
+      if (el.tagName && el.tagName.toLowerCase() === 'a') {
+        el.setAttribute('href', YOUTUBE_URL);
+      } else {
+        el.setAttribute('role', 'link');
+        el.setAttribute('tabindex', '0');
+      }
+      el.addEventListener('click', openYoutube);
+      el.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') openYoutube(ev);
+      });
+    });
+    root.querySelectorAll('.social-btn').forEach(el => {
+      if ((el.textContent || '').trim() === '▶') {
+        if (el.tagName && el.tagName.toLowerCase() === 'a') el.setAttribute('href', YOUTUBE_URL);
+        el.addEventListener('click', openYoutube);
+      }
+    });
+  }
+
+  function setupBookVisitTriggers() {
+    root.addEventListener('click', (e) => {
+      const trigger = e.target.closest ? e.target.closest('button, a') : null;
+      if (!trigger) return;
+      const text = (trigger.textContent || '').trim().toLowerCase();
+      if (text.includes('book visit')) {
+        const card = trigger.closest('.property-card, .pg-card');
+        const title = card ? card.querySelector('.card-title, .pg-title, h3, .title') : null;
+        const name = title ? title.textContent.trim() : 'Modern Co-living – Whitefield';
+        window.bookVisit(name);
+      }
+    });
+  }
+
+  function setupCommonLinks() {
+    root.addEventListener('click', (e) => {
+      const clickable = e.target && e.target.closest ? e.target.closest('a, button, .social-btn') : null;
+      if (isYoutubeTrigger(clickable)) {
+        openYoutube(e);
+        return;
+      }
+
+      const a = closestActionLink(e.target);
+      if (!a) return;
+      const rawHref = a.getAttribute('href') || '';
+      const text = (a.textContent || '').trim().toLowerCase();
+
+
+      if (rawHref === '#pgfinder' || rawHref.includes('#pgfinder') || text === 'pg finder' || text === 'find a pg') {
+        e.preventDefault();
+        navigate('pgfinder');
+        return;
+      }
+      if (rawHref === '#explore-rentals' || rawHref.includes('explore-rentals.html') || text === 'explore rentals' || text === 'start exploring') {
+        e.preventDefault();
+        navigate('explore');
+        return;
+      }
+      if (rawHref === '#explore-rentals-pg') {
+        e.preventDefault();
+        navigate('pgfinder');
+        return;
+      }
+      if (rawHref === '#home' || rawHref === 'index.html' || text === 'home') {
+        e.preventDefault();
+        navigate('home');
+        return;
+      }
+      if (rawHref === '#contact' || rawHref === '#contact-us' || text === 'contact' || text === 'contact us') {
+        e.preventDefault();
+        navigate('contact');
+        return;
+      }
+      if (rawHref === '#') {
+        e.preventDefault();
+      }
+    });
+  }
+
+  function setupModalClose() {
+    const modal = root.getElementById('modal');
+    if (!modal) return;
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) window.closeModal();
+    });
+  }
+
+  function setupNewsletter(selectorButton, selectorInput) {
+    const btn = root.querySelector(selectorButton);
+    const inp = root.querySelector(selectorInput);
+    if (!btn || !inp) return;
+    btn.addEventListener('click', () => {
+      if (inp.value.trim()) {
+        inp.value = '';
+        window.showToast('Subscribed! You\'ll get the latest listings.');
+      } else {
+        inp.style.borderColor = '#ef4444';
+        setTimeout(() => inp.style.borderColor = '', 1500);
+      }
+    });
+  }
+
+  function setupAuthButtons() {
+    root.querySelectorAll('.btn-login').forEach(btn => btn.addEventListener('click', () => window.showToast('Login action triggered.')));
+    root.querySelectorAll('.btn-signup').forEach(btn => btn.addEventListener('click', () => window.showToast('Sign up action triggered.')));
+  }
+
+  function initHome() {
+    setupCommonLinks();
+    setupYoutubeLinks();
+    setupBookVisitTriggers();
+    setupModalClose();
+    setupNewsletter('.btn-subscribe', '.newsletter-input');
+    setupAuthButtons();
+    root.querySelectorAll('.btn-view').forEach(btn => btn.addEventListener('click', () => window.showToast('Property details page will open here.')));
+    const searchBtn = root.querySelector('.search-btn');
+    if (searchBtn) searchBtn.addEventListener('click', (e) => { e.preventDefault(); navigate('explore'); });
+  }
+
+  function initExplore(options={}) {
+    setupCommonLinks();
+    setupYoutubeLinks();
+    setupBookVisitTriggers();
+    setupModalClose();
+    setupNewsletter('.subscribe', '.newsletter-input');
+    setupAuthButtons();
+
+    root.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => window.showToast('Property details page will open here.')));
+    root.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => activateExploreTab(tab)));
+    if (options.pgOnly) {
+      const pgTab = Array.from(root.querySelectorAll('.tab')).find(t => t.textContent.trim().toLowerCase().startsWith('pg'));
+      if (pgTab) activateExploreTab(pgTab);
+    }
+  }
+
+  function initPgFinder() {
+    setupCommonLinks();
+    setupYoutubeLinks();
+    setupBookVisitTriggers();
+    setupModalClose();
+    setupNewsletter('.subscribe', '.newsletter-input');
+    setupAuthButtons();
+
+    root.querySelectorAll('.view-btn').forEach(btn => btn.addEventListener('click', () => window.showToast('PG details page will open here.')));
+    const findBtn = root.querySelector('.find-btn');
+    if (findBtn) findBtn.addEventListener('click', () => window.showToast('PG search filters applied.'));
+    root.querySelectorAll('.area-card').forEach(card => card.addEventListener('click', () => window.showToast('Showing PGs for ' + card.querySelector('h3').textContent + '.')));
+    root.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      if (item) item.classList.toggle('open');
+    }));
+  }
+
+
+  function initContact() {
+    setupCommonLinks();
+    setupYoutubeLinks();
+    setupNewsletter('.subscribe', '.newsletter-input');
+    setupAuthButtons();
+
+    const sendBtn = root.querySelector('.send-btn');
+    if (sendBtn) sendBtn.addEventListener('click', () => window.showToast('Message sent successfully! Our team will contact you shortly.'));
+    root.querySelectorAll('.directions-btn').forEach(btn => btn.addEventListener('click', () => window.showToast('Directions will open here.')));
+    const whatsapp = root.querySelector('.whatsapp');
+    if (whatsapp) whatsapp.addEventListener('click', () => window.showToast('WhatsApp chat will open here.'));
+    const youtube = root.querySelector('.youtube-btn');
+    if (youtube) youtube.addEventListener('click', openYoutube);
+  }
+
+  function activateExploreTab(tab) {
+    root.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const type = tab.textContent.trim().toLowerCase().replace('pgs','pg').replace('flats','flat');
+    let count = 0;
+    root.querySelectorAll('.property-card').forEach(card => {
+      const show = type === 'all' || card.dataset.type === type;
+      card.style.display = show ? 'block' : 'none';
+      if (show) count++;
+    });
+    const countEl = root.querySelector('.results-count');
+    if (countEl) countEl.innerHTML = '<b>' + count + ' Properties Found</b> in Bangalore';
+  }
+
+  window.toggleDropdown = function(el) {
+    const dd = el.querySelector('.dropdown-menu');
+    if (!dd) return;
+    dd.classList.toggle('open');
+    const close = (e) => {
+      if (!el.contains(e.target)) {
+        dd.classList.remove('open');
+        root.removeEventListener('click', close);
+      }
+    };
+    setTimeout(() => root.addEventListener('click', close), 0);
+  };
+
+  window.selectLocation = function(val, e) {
+    if (e) e.preventDefault();
+    const r = e && e.target ? e.target.getRootNode() : root;
+    const txt = r.getElementById('locationText');
+    const dd = r.querySelector('#locationDropdown');
+    if (txt) txt.textContent = val;
+    if (dd) dd.classList.remove('open');
+  };
+
+  window.toggleFurnished = function() {
+    const t = root.getElementById('furnishedToggle');
+    if (t) t.classList.toggle('on');
+  };
+
+  window.updateBudget = function(el) {
+    const val = parseInt(el.value, 10);
+    const min = 5000;
+    const display = `₹${min.toLocaleString('en-IN')} – ₹${val.toLocaleString('en-IN')}`;
+    const target = el.getRootNode().getElementById('budgetDisplay');
+    if (target) target.textContent = display;
+    const pct = ((val - 3000) / (50000 - 3000)) * 100;
+    el.style.background = `linear-gradient(to right, #bfdbfe 0%, #2563eb ${pct * 0.3}%, #2563eb ${pct}%, #bfdbfe ${pct}%)`;
+  };
+
+  window.toggleHeart = function(btn) { btn.classList.toggle('liked'); };
+
+  window.bookVisit = function(arg1, arg2) {
+    const name = arg2 || arg1 || 'Modern Co-living – Whitefield';
+    const r = root;
+    const modal = r.getElementById('modal');
+    const title = r.getElementById('modalPropertyName') || r.getElementById('modalProperty');
+    if (title) title.textContent = name;
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+    }
+  };
+
+  window.closeModal = function() {
+    const modal = root.getElementById('modal');
+    if (modal) { modal.style.display = 'none'; modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+  };
+
+  window.confirmVisit = function() {
+    window.closeModal();
+    window.showToast('Booking confirmed successfully! We will contact you shortly.');
+  };
+
+  window.showToast = function(msg) {
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:white;padding:12px 24px;border-radius:10px;font-size:14px;font-family:Inter,sans-serif;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,0.25);max-width:calc(100vw - 32px);text-align:center;';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  };
+
+  function applyRoute() {
+    const route = routeFromHash();
+    render(route.page, route.anchor, { pgOnly: route.pgOnly });
+  }
+
+  window.addEventListener('hashchange', applyRoute);
+  window.addEventListener('popstate', applyRoute);
+  applyRoute();
+})();
+</script>
+</body>
+</html>
