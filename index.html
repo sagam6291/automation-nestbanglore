@@ -13,6 +13,16 @@
   body { margin:0; font-family:'Inter',sans-serif; background:#fff; }
   #app { display:block; min-height:100vh; }
   .app-loader { min-height:100vh; display:grid; place-items:center; font-family:Inter,sans-serif; color:#2563eb; font-weight:800; }
+  #app[data-automation-root="true"] {
+    display: block;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+  #app[data-page="home"] { color: #1a1a2e; background: #fff; }
+  #app[data-page="explore"] { color: #111827; background: #f4f7fb; }
+  #app[data-page="pgfinder"] { color: #111827; background: #f6f8fb; }
+  #app[data-page="contact"] { color: #111827; background: #f5f7fb; }
+  [data-automation-clickable="true"] { cursor: pointer; }
 </style>
 </head>
 <body>
@@ -1544,7 +1554,16 @@
 (() => {
   const YOUTUBE_URL = 'https://www.youtube.com/watch?v=EA4DipdhpV8';
   const app = document.getElementById('app');
-  const root = app.attachShadow({ mode: 'open' });
+  const root = app;
+  root.innerHTML = '';
+  root.getElementById = function(id) {
+    return this.querySelector('#' + CSS.escape(id));
+  };
+  root.setAttribute('role', 'main');
+  root.setAttribute('tabindex', '-1');
+  root.setAttribute('aria-label', 'NestBangalore website');
+  root.setAttribute('data-testid', 'app-root');
+  root.setAttribute('data-automation-root', 'true');
   let currentPage = '';
 
   function templateFor(page) {
@@ -1567,11 +1586,14 @@
     currentPage = page;
     const tpl = templateFor(page);
     root.innerHTML = '';
+    root.dataset.page = page;
+    root.setAttribute('aria-label', page === 'home' ? 'NestBangalore home page' : page === 'explore' ? 'NestBangalore explore rentals page' : page === 'pgfinder' ? 'NestBangalore PG Finder page' : 'NestBangalore contact page');
     root.appendChild(tpl.content.cloneNode(true));
     if (page === 'home') initHome();
     else if (page === 'explore') initExplore(options);
     else if (page === 'pgfinder') initPgFinder();
     else if (page === 'contact') initContact();
+    enhanceAutomationAccessibility(page);
     window.scrollTo(0,0);
     if (anchor) setTimeout(() => scrollInRoot(anchor), 30);
   }
@@ -1760,7 +1782,10 @@
     root.querySelectorAll('.area-card').forEach(card => card.addEventListener('click', () => window.showToast('Showing PGs for ' + card.querySelector('h3').textContent + '.')));
     root.querySelectorAll('.faq-q').forEach(btn => btn.addEventListener('click', () => {
       const item = btn.closest('.faq-item');
-      if (item) item.classList.toggle('open');
+      if (item) {
+        const isOpen = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
     }));
   }
 
@@ -1781,8 +1806,12 @@
   }
 
   function activateExploreTab(tab) {
-    root.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    root.querySelectorAll('.tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
     tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
     const type = tab.textContent.trim().toLowerCase().replace('pgs','pg').replace('flats','flat');
     let count = 0;
     root.querySelectorAll('.property-card').forEach(card => {
@@ -1798,9 +1827,11 @@
     const dd = el.querySelector('.dropdown-menu');
     if (!dd) return;
     dd.classList.toggle('open');
+    el.setAttribute('aria-expanded', dd.classList.contains('open') ? 'true' : 'false');
     const close = (e) => {
       if (!el.contains(e.target)) {
         dd.classList.remove('open');
+        el.setAttribute('aria-expanded', 'false');
         root.removeEventListener('click', close);
       }
     };
@@ -1814,11 +1845,16 @@
     const dd = r.querySelector('#locationDropdown');
     if (txt) txt.textContent = val;
     if (dd) dd.classList.remove('open');
+    const field = r.getElementById('locationField');
+    if (field) field.setAttribute('aria-expanded', 'false');
   };
 
   window.toggleFurnished = function() {
     const t = root.getElementById('furnishedToggle');
-    if (t) t.classList.toggle('on');
+    if (t) {
+      t.classList.toggle('on');
+      t.setAttribute('aria-checked', t.classList.contains('on') ? 'true' : 'false');
+    }
   };
 
   window.updateBudget = function(el) {
@@ -1831,7 +1867,10 @@
     el.style.background = `linear-gradient(to right, #bfdbfe 0%, #2563eb ${pct * 0.3}%, #2563eb ${pct}%, #bfdbfe ${pct}%)`;
   };
 
-  window.toggleHeart = function(btn) { btn.classList.toggle('liked'); };
+  window.toggleHeart = function(btn) {
+    btn.classList.toggle('liked');
+    btn.setAttribute('aria-pressed', btn.classList.contains('liked') ? 'true' : 'false');
+  };
 
   window.bookVisit = function(arg1, arg2) {
     const name = arg2 || arg1 || 'Modern Co-living – Whitefield';
@@ -1863,6 +1902,312 @@
     document.body.appendChild(t);
     setTimeout(() => t.remove(), 3200);
   };
+
+
+  function automationSlug(value, fallback='item') {
+    const source = (value || fallback).toString().trim().toLowerCase();
+    return source
+      .normalize('NFKD')
+      .replace(/[^\w\s-]/g, '')
+      .replace(/_/g, '-')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 60) || fallback;
+  }
+
+  function cleanVisibleText(el) {
+    return (el && el.textContent ? el.textContent : '').replace(/\s+/g, ' ').trim();
+  }
+
+  function ensureId(el, id) {
+    if (!el || el.id) return;
+    el.id = id;
+  }
+
+  function setAttr(el, name, value) {
+    if (!el || value === undefined || value === null || value === '') return;
+    el.setAttribute(name, value);
+  }
+
+  function setAutomation(el, testId, label) {
+    if (!el) return;
+    setAttr(el, 'data-testid', testId);
+    setAttr(el, 'data-automation-id', testId);
+    const text = label || cleanVisibleText(el) || el.getAttribute('aria-label') || el.getAttribute('placeholder') || testId;
+    if (text) setAttr(el, 'data-automation-label', text);
+  }
+
+  function classHas(el, name) {
+    return el && el.classList && el.classList.contains(name);
+  }
+
+  function nearestLabelText(el) {
+    const explicit = el.id ? root.querySelector('label[for="' + CSS.escape(el.id) + '"]') : null;
+    if (explicit) return cleanVisibleText(explicit);
+    const wrapper = el.closest ? el.closest('label') : null;
+    if (wrapper) return cleanVisibleText(wrapper);
+    const field = el.closest ? el.closest('.field, .booking-field, .search-field, .filter-group, .filter-col, .priority, .toggle-row') : null;
+    if (field) {
+      const label = field.querySelector('label, .booking-label, .filter-group-title, .priority-label, .toggle-label');
+      if (label) return cleanVisibleText(label);
+    }
+    return '';
+  }
+
+  function describeButton(btn, index) {
+    const text = cleanVisibleText(btn);
+    if (text) return text;
+    if (classHas(btn, 'card-heart') || classHas(btn, 'heart')) {
+      const card = btn.closest('.property-card, .pg-card');
+      const title = card ? cleanVisibleText(card.querySelector('.card-title, .pg-title, h3, .title')) : '';
+      return title ? 'Save ' + title : 'Save property';
+    }
+    if (classHas(btn, 'hamburger')) return 'Open menu';
+    if (classHas(btn, 'booking-close') || classHas(btn, 'close')) return 'Close booking modal';
+    if (classHas(btn, 'btn-icon')) return index === 0 ? 'Toggle theme' : 'Open profile';
+    return 'Button ' + (index + 1);
+  }
+
+  function enhanceNavigation(page) {
+    root.querySelectorAll('.navbar').forEach((nav, i) => {
+      setAttr(nav, 'role', 'navigation');
+      setAttr(nav, 'aria-label', 'Primary navigation');
+      setAutomation(nav, 'navbar-' + (i + 1), 'Primary navigation');
+    });
+
+    root.querySelectorAll('.logo, .footer-logo').forEach((logo, i) => {
+      setAttr(logo, 'aria-label', 'Go to home');
+      setAutomation(logo, i === 0 ? 'nav-logo-home' : 'footer-logo-home', 'Go to home');
+    });
+
+    root.querySelectorAll('.nav-links').forEach((navLinks, i) => {
+      setAttr(navLinks, 'role', 'menubar');
+      setAutomation(navLinks, 'nav-links-' + (i + 1), 'Navigation links');
+      navLinks.querySelectorAll('a').forEach((a) => {
+        const text = cleanVisibleText(a);
+        const slug = automationSlug(text, 'nav-link');
+        setAttr(a, 'role', 'menuitem');
+        setAttr(a, 'aria-label', text);
+        setAutomation(a, 'nav-link-' + slug, text);
+      });
+    });
+
+    root.querySelectorAll('footer').forEach((footer, i) => {
+      setAttr(footer, 'role', 'contentinfo');
+      setAutomation(footer, 'footer-' + (i + 1), 'Footer');
+    });
+  }
+
+  function enhanceSections(page) {
+    const sectionSelectors = [
+      ['.hero', 'home-hero'],
+      ['.quick-filters', 'quick-filters'],
+      ['.featured', 'featured-properties'],
+      ['.how-it-works', 'how-it-works'],
+      ['.testimonials', 'testimonials'],
+      ['.cta-section', 'call-to-action'],
+      ['.page-hero', 'explore-hero'],
+      ['.explore-wrap', 'explore-results'],
+      ['.pg-hero', 'pg-finder-hero'],
+      ['.contact-hero', 'contact-hero'],
+      ['.contact-main', 'contact-main']
+    ];
+    sectionSelectors.forEach(([selector, base]) => {
+      root.querySelectorAll(selector).forEach((section, i) => {
+        const heading = section.querySelector('h1,h2,h3,.section-title,.title');
+        if (heading) {
+          ensureId(heading, base + '-heading-' + (i + 1));
+          setAttr(section, 'aria-labelledby', heading.id);
+        } else {
+          setAttr(section, 'aria-label', base.replace(/-/g, ' '));
+        }
+        setAutomation(section, base + '-' + (i + 1), cleanVisibleText(heading) || base.replace(/-/g, ' '));
+      });
+    });
+
+    root.querySelectorAll('h1,h2,h3,h4,.section-title,.title,.card-title,.pg-title,.price,.card-price,.location,.card-location,.budget-range,.results-count').forEach((el, i) => {
+      const text = cleanVisibleText(el);
+      if (!text) return;
+      setAutomation(el, 'text-' + automationSlug(text, 'text') + '-' + (i + 1), text);
+    });
+  }
+
+  function enhanceFormsAndControls(page) {
+    root.querySelectorAll('button').forEach((btn, i) => {
+      if (!btn.hasAttribute('type')) btn.setAttribute('type', 'button');
+      const label = describeButton(btn, i);
+      setAttr(btn, 'aria-label', btn.getAttribute('aria-label') || label);
+      if (classHas(btn, 'heart') || classHas(btn, 'card-heart')) {
+        setAttr(btn, 'aria-pressed', btn.classList.contains('liked') ? 'true' : 'false');
+      }
+      if (classHas(btn, 'tab')) {
+        setAttr(btn, 'role', 'tab');
+        setAttr(btn, 'aria-selected', btn.classList.contains('active') ? 'true' : 'false');
+      }
+      setAutomation(btn, 'button-' + automationSlug(label, 'button') + '-' + (i + 1), label);
+    });
+
+    root.querySelectorAll('input, select, textarea').forEach((field, i) => {
+      const type = (field.getAttribute('type') || field.tagName.toLowerCase()).toLowerCase();
+      const placeholder = field.getAttribute('placeholder') || '';
+      const labelText = nearestLabelText(field) || placeholder || cleanVisibleText(field.closest('label')) || type;
+      ensureId(field, 'automation-' + type + '-' + (i + 1));
+      setAttr(field, 'aria-label', field.getAttribute('aria-label') || labelText);
+      setAutomation(field, 'field-' + automationSlug(labelText || type, 'field') + '-' + (i + 1), labelText || type);
+      if (type === 'checkbox' || type === 'radio') {
+        const wrapper = field.closest('label');
+        if (wrapper) {
+          setAutomation(wrapper, 'option-' + automationSlug(cleanVisibleText(wrapper), 'option') + '-' + (i + 1), cleanVisibleText(wrapper));
+        }
+      }
+    });
+
+    root.querySelectorAll('.search-field').forEach((field, i) => {
+      const text = cleanVisibleText(field.querySelector('#locationText')) || cleanVisibleText(field.querySelector('option')) || 'Search field';
+      if (field.id === 'locationField' || field.querySelector('.dropdown-menu')) {
+        setAttr(field, 'role', 'button');
+        setAttr(field, 'tabindex', '0');
+        setAttr(field, 'aria-haspopup', 'listbox');
+        setAttr(field, 'aria-expanded', field.querySelector('.dropdown-menu.open') ? 'true' : 'false');
+        field.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            window.toggleDropdown(field);
+          }
+        });
+      }
+      setAutomation(field, 'search-field-' + automationSlug(text, 'search') + '-' + (i + 1), text);
+    });
+
+    root.querySelectorAll('.dropdown-menu').forEach((menu, i) => {
+      setAttr(menu, 'role', 'listbox');
+      setAutomation(menu, 'dropdown-menu-' + (i + 1), 'Dropdown menu');
+      menu.querySelectorAll('a').forEach((a, j) => {
+        const text = cleanVisibleText(a);
+        setAttr(a, 'role', 'option');
+        setAutomation(a, 'dropdown-option-' + automationSlug(text, 'option') + '-' + (j + 1), text);
+      });
+    });
+
+    root.querySelectorAll('.toggle').forEach((toggle, i) => {
+      const label = cleanVisibleText(toggle.closest('.toggle-row')) || 'Toggle';
+      setAttr(toggle, 'role', 'switch');
+      setAttr(toggle, 'tabindex', '0');
+      setAttr(toggle, 'aria-label', label);
+      setAttr(toggle, 'aria-checked', toggle.classList.contains('on') ? 'true' : 'false');
+      setAutomation(toggle, 'switch-' + automationSlug(label, 'switch') + '-' + (i + 1), label);
+      toggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle.click();
+        }
+      });
+    });
+
+    root.querySelectorAll('.tab').forEach((tab, i) => {
+      const text = cleanVisibleText(tab);
+      setAttr(tab.parentElement, 'role', 'tablist');
+      setAutomation(tab, 'tab-' + automationSlug(text, 'tab') + '-' + (i + 1), text);
+    });
+  }
+
+  function enhanceCardsAndClickableBlocks(page) {
+    root.querySelectorAll('.property-card, .pg-card').forEach((card, i) => {
+      const title = cleanVisibleText(card.querySelector('.card-title, .pg-title, h3, .title')) || 'Property card';
+      const price = cleanVisibleText(card.querySelector('.card-price, .price'));
+      setAttr(card, 'role', 'article');
+      setAttr(card, 'aria-label', price ? title + ', ' + price : title);
+      setAutomation(card, 'property-card-' + automationSlug(title, 'property') + '-' + (i + 1), title);
+      card.querySelectorAll('.btn-view, .view-btn').forEach((btn, j) => {
+        setAutomation(btn, 'property-view-' + automationSlug(title, 'property') + '-' + (j + 1), 'View ' + title);
+        setAttr(btn, 'aria-label', 'View ' + title);
+      });
+      card.querySelectorAll('.btn-book, .book-btn').forEach((btn, j) => {
+        setAutomation(btn, 'property-book-visit-' + automationSlug(title, 'property') + '-' + (j + 1), 'Book Visit ' + title);
+        setAttr(btn, 'aria-label', 'Book Visit ' + title);
+      });
+      card.querySelectorAll('.card-heart, .heart').forEach((btn, j) => {
+        setAutomation(btn, 'property-save-' + automationSlug(title, 'property') + '-' + (j + 1), 'Save ' + title);
+        setAttr(btn, 'aria-label', 'Save ' + title);
+      });
+    });
+
+    root.querySelectorAll('.area-card, .whatsapp, .quick-item').forEach((el, i) => {
+      const text = cleanVisibleText(el);
+      if (!text) return;
+      setAttr(el, 'role', 'button');
+      setAttr(el, 'tabindex', '0');
+      setAttr(el, 'data-automation-clickable', 'true');
+      setAutomation(el, 'clickable-' + automationSlug(text, 'item') + '-' + (i + 1), text);
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+
+    root.querySelectorAll('.faq-item').forEach((item, i) => {
+      const btn = item.querySelector('.faq-q');
+      const panel = item.querySelector('.faq-a');
+      if (btn && panel) {
+        ensureId(panel, 'faq-answer-' + (i + 1));
+        setAttr(btn, 'aria-controls', panel.id);
+        setAttr(btn, 'aria-expanded', item.classList.contains('open') ? 'true' : 'false');
+        setAutomation(btn, 'faq-question-' + automationSlug(cleanVisibleText(btn), 'question') + '-' + (i + 1), cleanVisibleText(btn));
+      }
+    });
+  }
+
+  function enhanceLinks(page) {
+    root.querySelectorAll('a').forEach((a, i) => {
+      const text = cleanVisibleText(a);
+      if (!a.hasAttribute('href')) a.setAttribute('href', '#');
+      setAttr(a, 'aria-label', a.getAttribute('aria-label') || text || 'Link');
+      setAutomation(a, 'link-' + automationSlug(text || a.getAttribute('href'), 'link') + '-' + (i + 1), text || a.getAttribute('href'));
+    });
+
+    root.querySelectorAll('.btn-demo, .btn-watch-how, .watch-btn, .youtube-btn, .social-btn.active').forEach((el, i) => {
+      setAutomation(el, 'youtube-link-' + (i + 1), cleanVisibleText(el) || 'Watch YouTube video');
+      setAttr(el, 'aria-label', cleanVisibleText(el) || 'Watch YouTube video');
+    });
+  }
+
+  function enhanceBookingModal() {
+    const modal = root.getElementById('modal');
+    if (!modal) return;
+    setAttr(modal, 'role', 'presentation');
+    setAttr(modal, 'data-testid', 'booking-modal-overlay');
+    setAttr(modal, 'data-automation-id', 'booking-modal-overlay');
+    const dialog = modal.querySelector('[role="dialog"], .booking-card');
+    if (dialog) {
+      setAttr(dialog, 'role', 'dialog');
+      setAttr(dialog, 'aria-modal', 'true');
+      setAutomation(dialog, 'booking-modal', 'Book a Visit');
+    }
+    modal.querySelectorAll('.booking-field').forEach((field, i) => {
+      const label = field.querySelector('.booking-label');
+      const input = field.querySelector('.booking-input');
+      if (label && input) {
+        ensureId(label, 'booking-label-' + (i + 1));
+        ensureId(input, 'booking-input-' + automationSlug(cleanVisibleText(label), 'booking') + '-' + (i + 1));
+        setAttr(input, 'aria-labelledby', label.id);
+        setAutomation(input, 'booking-' + automationSlug(cleanVisibleText(label), 'field') + '-' + (i + 1), cleanVisibleText(label));
+      }
+    });
+  }
+
+  function enhanceAutomationAccessibility(page) {
+    root.setAttribute('data-current-page', page);
+    enhanceNavigation(page);
+    enhanceSections(page);
+    enhanceFormsAndControls(page);
+    enhanceCardsAndClickableBlocks(page);
+    enhanceLinks(page);
+    enhanceBookingModal();
+  }
+
 
   function applyRoute() {
     const route = routeFromHash();
